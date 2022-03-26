@@ -1,0 +1,3298 @@
+## 命名
+
+java - 启动一个Java应用程序
+
+## 简介
+
+要启动一个类文件。
+
+`java `[*options*] *mainclass* [*args* ...]。
+
+要启动JAR文件中的主类。
+
+`java `[*options*] `-jar `*jarfile* [*args* ...] 。
+
+要在一个模块中启动主类。
+
+`java `[*options*] `-m `*module*[`/`*mainclass*] [*args* ...] 。
+
+或
+
+`java `[*options*] `--module`*模块*[`/`*mainclass*] [*args* ...] 。
+
+要启动一个单一的源文件程序。
+
+`java `[*options*] *source-file* [*args* ...]。
+
+*选项*
+
+可选的。指定由空格分隔的命令行选项。参见 "[Java选项概述 "](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#overview-of-java-options)以了解可用选项的描述。
+
+*主类*
+
+指定要启动的类的名称。`classname`后面的命令行条目是main方法的参数。
+
+`-jar `*jarfile*
+
+执行一个封装在JAR文件中的程序。*jarfile*参数是一个JAR文件的名称，该文件的清单包含`Main-Class:`*classname*形式的一行，定义了具有`public static void main(String[] args)`方法的类，作为你应用程序的起点。当你使用`-jar``时`，指定的JAR文件是所有用户类的来源，其他类的路径设置被忽略。如果你正在使用JAR文件，那么请看[jar](https://docs.oracle.com/en/java/javase/17/docs/specs/man/jar.html)。
+
+`-m`或`-module`*模块*[`/`*mainclass*]
+
+如果给定了*mainclass**，则*执行*mainclass*指定的模块中的主类；如果没有给定，则执行*模块*中的值。换句话说，*mainclass*可以在模块没有指定时使用，也可以在指定时覆盖其值。
+
+见[Java的标准选项](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#standard-options-for-java)。
+
+*源文件*
+
+只用于启动一个单一的源文件程序。当使用源文件模式时，指定包含主类的源文件。参见[使用源文件模式启动单文件源码程序](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#using-source-file-mode-to-launch-single-file-source-code-programs)
+
+*args* ...
+
+可选的。*mainclass*、*source-file*、`-jar `*jarfile*和`-m`或`-module `*module*`/`*mainclass*后面的参数会作为参数传给主类。
+
+## 描述
+
+`java`命令启动一个Java应用程序。它通过启动Java虚拟机（JVM），加载指定的类，并调用该类的`main()`方法来实现。该方法必须被声明为`公共的`和`静态的`，它不能返回任何值，并且必须接受一个`字符串`数组作为参数。该方法声明的形式如下。
+
+```
+public static void main(String[] args)
+```
+
+在源文件模式下，`java`命令可以启动一个在源文件中声明的类。关于使用源文件模式的描述，请参见使用源文件模式[来启动单文件源代码程序。](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#using-source-file-mode-to-launch-single-file-source-code-programs)
+
+**注意:** 你可以使用 `JDK_JAVA_OPTIONS `启动器环境变量，将其内容预置到 `java `启动器的实际命令行中。参见[使用 JDK_JAVA_OPTIONS 启动器环境变量](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#using-the-jdk_java_options-launcher-environment-variable)。
+
+默认情况下，不是`java`命令的选项的第一个参数是要调用的类的完全限定名称。如果指定了`-jar`，那么它的参数就是包含应用程序的类和资源文件的JAR文件的名称。启动类必须由其清单文件中的M`ain-Class``清单`头来表示。
+
+类文件名或JAR文件名之后的参数被传递给`main()`方法。
+
+### `javaw`
+
+**窗口。**`javaw`命令与`java`相同，只是`javaw`没有相关的控制台窗口。当你不希望出现命令提示窗口时，可以使用`javaw`。然而，如果启动失败，`javaw`启动器会显示一个包含错误信息的对话框。
+
+## 使用源文件模式启动单文件源代码程序
+
+要启动一个在源文件中声明的类，请在源文件模式下运行`java`启动器。进入源文件模式是由`java`命令行中的两个项目决定的。
+
+·     命令行中不是选项或选项的一部分的第一项。换句话说，就是命令行中的那一项，否则就是主类名称。
+
+·     如果存在`--``源`*版本*选项，则为`--``源`*版本。*
+
+如果该类确定了一个扩展名为`.java``的`现有文件，或者指定了`--source`选项，那么将选择源文件模式。然后源文件被编译和运行。`--source`选项可以用来指定源代码的源*版本*或*N*。这决定了可以使用的API。当你设置`--source `*N**时*，你只能使用JDK *N*中定义的公共API。
+
+**注意：***N*的有效值在每个版本中都会改变，新的值会增加，旧的值会删除。如果你使用一个不再被支持的*N*值，你会得到一个错误信息。支持的*N*值是当前的Java SE版本(`17`)和少数以前的版本，详细情况见`javac`的命令行帮助，在`--source`和`--release`选项下。
+
+如果文件没有`.java`扩展名，必须使用`--source`选项来告诉`java`命令使用源文件模式。当源文件是一个要执行的 "脚本"，并且源文件的名称不遵循Java源文件的正常命名规则时，就可以使用`--source`选项。
+
+在源文件模式下，效果就像源文件被编译到内存中，在源文件中找到的第一个类被执行。在原始命令行中放在源文件名称后面的任何参数在执行时都会传递给编译的类。
+
+例如，如果一个文件被命名为`HelloWorld.java`并包含一个名为`hello.World``的`类，那么启动该类的源文件模式命令将是。
+
+```
+java HelloWorld.java
+```
+
+这个例子说明了类可以在一个命名的包中，而不需要在未命名的包中。这种源文件模式的使用非正式地等同于使用下面两条命令，其中`hello.World`是包中的类的名称。
+
+```
+javac -d <memory> HelloWorld.java
+java -cp <memory> hello.World
+```
+
+**在源文件模式下，任何额外的命令行选项都会被处理，如下所示。**
+
+·     启动器会扫描在源文件前指定的选项，寻找任何与之相关的选项，以便编译源文件。
+
+这包括`--class-path`, `--module-path`, `--add-exports`, `--add-modules`, --`limit-modules`, --`patch-module`, `--upgrade-module-path`，以及这些选项的任何变化形式。它还包括新的 `--enable-preview `选项，在JEP 12中描述。
+
+·     没有规定向编译器传递任何额外的选项，如`-processor`或`-Werror`。
+
+·     命令行参数文件（`@`-文件）可以以标准方式使用。无论是虚拟机还是被调用的程序的长参数列表，都可以放在命令行指定的文件中，方法是在文件名前加一个`@`字符。
+
+**在源文件模式下，编译的过程如下。**
+
+·     任何与编译环境有关的命令行选项都会被考虑在内。
+
+·     没有找到其他源文件并进行编译，就像源路径被设置为空值一样。
+
+·     注释处理被禁用，就像`-proc:none``生效一样`。
+
+·     如果通过`--source`选项指定了一个版本，该值将被用作编译中隐含的`--release`选项的参数。这既设定了编译器接受的源版本，也设定了源文件中的代码可能使用的系统API。
+
+·     源文件是在一个未命名的模块的上下文中编译的。
+
+·     源文件应该包含一个或多个顶层类，其中第一个类被当作要执行的类。
+
+·     编译器不执行JLS 7.6末尾定义的可选限制，即一个命名包中的类型应该存在于一个文件中，该文件的名称由类型名称和`.java`扩展名组成。
+
+·     如果源文件包含错误，适当的错误信息将被写入标准错误流，并且启动器以非零的退出代码退出。
+
+**在源文件模式下，执行过程如下。**
+
+·     要执行的类是在源文件中找到的第一个顶层类。它必须包含一个标准的`公共静态``void main(String[])`方法的声明。
+
+·     编译后的类由一个自定义的类加载器加载，它委托给应用程序类加载器。这意味着，出现在应用程序类路径上的类不能引用源文件中声明的任何类。
+
+·     编译后的类会在一个未命名的模块的上下文中执行，就像 `--add-modules=ALL-DEFAULT``生效一样`。这是在命令行中可能指定的任何其他 `--add-module `选项之外的。
+
+·     任何出现在命令行上的文件名后面的参数都会以明显的方式传递给标准的main方法。
+
+·     如果应用程序类路径上有一个类的名称与要执行的类的名称相同，则是一个错误。
+
+参见[JEP 330。启动单文件源代码程序](http://openjdk.java.net/jeps/330)的完整细节。
+
+## 使用 JDK_JAVA_OPTIONS 启动器环境变量
+
+`JDK_JAVA_OPTIONS `将其内容预置到从命令行解析的选项中。`JDK_JAVA_OPTIONS`环境变量的内容是一个参数列表，由白字分隔（由`isspace()`决定）。这些参数将被预添加到传递给`java `launcher的命令行参数中。环境变量的编码要求与系统中的`java`命令行相同。`JDK_JAVA_OPTIONS`环境变量内容的处理方式与命令行中指定的内容相同。
+
+单(`'`)或双(`"`)引号可以用来包围含有空白字符的参数。只要去掉这对引号，就可以保留开放引号和第一个匹配的闭合引号之间的所有内容。如果没有找到匹配的引号，启动器将以一个错误信息中止。支持`@`-文件，因为它们是在命令行中指定的。然而，与`@`-文件一样，不支持使用通配符。为了减少对`JDK_JAVA_OPTIONS`行为的潜在误用，环境变量中不允许出现指定主类的选项（如`-jar`）或导致`java`启动器不执行主类就退出的选项（如`-h`）。如果这些选项出现在环境变量中，启动器将以错误信息中止。当`JDK_JAVA_OPTIONS`被设置时，启动器会向stderr打印一条信息作为提醒。
+
+**例子。**
+
+```
+$ export JDK_JAVA_OPTIONS='-g @file1 -Dprop=value @file2 -Dws.prop="white spaces"'
+$ java -Xint @file3
+```
+
+相当于命令行。
+
+```
+java -g @file1 -Dprop=value @file2 -Dws.prop="white spaces" -Xint @file3
+```
+
+## Java选项概述
+
+`java`命令支持以下几类广泛的选项。
+
+·     [Java的标准选项](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#standard-options-for-java)。保证所有Java虚拟机（JVM）的实现都支持的选项。它们用于常见的操作，如检查JRE的版本，设置类的路径，启用粗略的输出，等等。
+
+·     [Java的额外选项](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#extra-options-for-java)。专门针对Java HotSpot虚拟机的通用选项。它们并不保证被所有的JVM实现所支持，而且会被改变。这些选项以`-X`开头。
+
+高级选项不建议随便使用。这些是开发人员的选项，用于调整Java HotSpot虚拟机操作的特定区域，这些区域通常有特定的系统要求，并可能需要对系统配置参数的特权访问。在性能调整[实例](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#performance-tuning-examples)中提供了几个性能调整的例子。这些选项并不保证被所有的JVM实现所支持，而且会有变化。高级选项以`-XX`开头。
+
+·     [Java的高级运行时选项](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#advanced-runtime-options-for-java)。控制Java HotSpot VM的运行时行为。
+
+·     [java的高级JIT编译器选项](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#advanced-jit-compiler-options-for-java)。控制由Java HotSpot VM执行的动态及时（JIT）编译。
+
+·     [Java的高级服务性选项](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#advanced-serviceability-options-for-java)。启用收集系统信息和执行广泛的调试。
+
+·     [Java的高级垃圾收集选项](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#advanced-garbage-collection-options-for-java)。控制Java HotSpot如何进行垃圾收集（GC）。
+
+布尔选项用于启用一个默认禁用的功能或禁用一个默认启用的功能。这种选项不需要参数。布尔`-XX`选项使用加号（`-XX:+`*OptionName*）启用，使用减号（`-XX:-`*OptionName*）禁用。
+
+对于需要参数的选项，参数可以用空格、冒号（:）或等号（=）与选项名称分开，或者参数可以直接跟在选项后面（每个选项的具体语法都不同）。如果你要以字节为单位指定大小，那么你可以不使用后缀，或者使用后缀`k`或`K`表示千字节（KB），`m`或`M`表示兆字节（MB），`g`或`G`表示千兆字节（GB）。例如，要将大小设置为8GB，你可以指定`8g`、`8192m`、`8388608k`或`8589934592`作为参数。如果你要指定百分比，那么使用0到1的数字。例如，指定`0.25`为25%。
+
+下面几节描述了过时的、废弃的和删除的选项。
+
+·     [废弃的Java选项](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#deprecated-java-options)。接受并执行 ---- 当使用它们时，会发出一个警告。
+
+·     [过时的Java选项](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#obsolete-java-options)。可接受但被忽略 --- 使用时将发出警告。
+
+·     [已删除的Java选项](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#removed-java-options)。删除了 --- 使用它们会导致错误。
+
+## Java的标准选项
+
+这些是所有JVM的实现所支持的最常用的选项。
+
+**注意：**要指定一个长选项的参数，可以使用 `--`*name*`=`*value* 或 `--`*name value*。
+
+`-agentlib:`*libname*[`=`*options*] 。
+
+加载指定的本地代理库。在库的名称后面，可以使用一个逗号分隔的列表，列出该库的特定选项。
+
+·     **Linux****和macOS：**如果指定了选项`-agentlib:foo`，那么JVM会尝试在`LD_LIBRARY_PATH`系统变量（在macOS上这个变量是`DYLD_LIBRARY_PATH`）指定的位置加载名为`libfoo.so``的`库。
+
+·     **Windows****。**如果指定了选项`-agentlib:foo`，那么JVM就会尝试在`PATH`系统变量指定的位置加载名为`foo.dll``的`库。
+
+下面的例子显示了如何加载Java Debug Wire Protocol（JDWP）库并监听8000端口的套接字连接，在主类加载前暂停JVM。
+
+```
+-agentlib:jdwp=transport=dt_socket,server=y,address=8000
+```
+
+`-agentpath:`*pathname*[`=`*options*]。
+
+加载由绝对路径名称指定的本地代理库。该选项等同于`-agentlib`，但使用库的完整路径和文件名。
+
+`--class-path `*classpath*, `-classpath `*classpath*, 或 `-cp `*classpath*
+
+分号（`；`）分隔的目录、JAR档案和ZIP档案的列表，以搜索类文件。
+
+指定*classpath**会*覆盖`CLASSPATH`环境变量的任何设置。如果没有使用类路径选项，也没有设置*classpath*，那么用户的类路径由当前目录（.）组成。
+
+作为一种特殊的便利，一个包含星号（*）基名的类路径元素被认为等同于指定一个扩展名为`.jar`或`.JAR``的`目录中的所有文件的列表。Java程序无法分辨这两种调用的区别。例如，如果目录mydir包含`a.jar`和`b.JAR`，那么类路径元素mydir/*被扩展为`A.jar:b.JAR`，只不过JAR文件的顺序没有被指定。指定目录中的所有`.jar`文件，即使是隐藏的，也会被包括在列表中。一个由星号（*）组成的类路径条目会扩展为当前目录中所有jar文件的列表。`CLASSPATH`环境变量，如果定义了的话，也会类似地展开。任何在Java虚拟机启动前发生的类路径通配符扩展。除非通过查询环境，如调用`System.getenv("CLASSPATH")``，否则`Java程序不会看到没有扩展的通配符。
+
+```
+-disable-@files
+```
+
+可以在命令行的任何地方使用，包括在参数文件中，以防止进一步的`@filename`扩展。该选项在该选项之后停止扩展`@`-argfiles。
+
+```
+--enable-preview
+```
+
+允许类依赖于版本的[预览功能。](https://docs.oracle.com/en/java/javase/12/language/index.html#JSLAN-GUID-5A82FE0E-0CA4-4F1F-B075-564874FE2823)
+
+`--module-path`*模块路径...*或`-p`*模块路径*
+
+一个分号（`；`）分隔的目录列表，其中每个目录是一个模块的目录。
+
+`-upgrade-module-path`*模块路径.*..
+
+一个分号（`；`）分隔的目录列表，其中每个目录都是替换运行时镜像中可升级模块的目录。
+
+`--add-modules`*模块*[`,`*模块...*]
+
+指定除初始模块外要解析的根模块。*模块*也可以是`ALL-DEFAULT`、`ALL-SYSTEM`和`ALL-MODULE-PATH`。
+
+```
+--``列表``-``模块
+```
+
+列出可观察的模块，然后退出。
+
+`-d `*module_name* 或 `--describe-module `*module_name*
+
+描述了一个指定的模块，然后退出。
+
+```
+--``干运行
+```
+
+创建虚拟机，但不执行主方法。这个`-dry-run`选项可能对验证命令行选项（如模块系统配置）很有用。
+
+```
+--``验证``-``模块
+```
+
+验证所有模块并退出。这个选项有助于发现与模块路径上的模块的冲突和其他错误。
+
+`-`*Dproperty*`=`*value*
+
+设置一个系统属性值。*属性*变量是一个没有空格的字符串，代表属性的名称。*值*变量是一个字符串，代表该属性的值。如果*值*是一个带有空格的字符串，那么用引号将其括起来（例如 `-Dfoo="foo bar"`）。
+
+`-disableassertions`[`:`[*packagename*]...|`:`*classname*] 或 `-da`[`:`[*packagename*]...|`:`*classname*]
+
+禁用断言。默认情况下，断言在所有包和类中被禁用。在没有参数的情况下，`-disableassertions `(`-da`)在所有包和类中禁用断言。如果参数*packagename*以`....`..结尾，则开关将禁用断言。的参数，开关将禁用指定包和任何子包中的断言。如果参数是简单的 `...`，则开关会禁用当前工作目录中未命名的包中的断言。有了*classname*参数，开关就会禁用指定类中的断言。
+
+`-disableassertions `(`-da`) 选项适用于所有类加载器和系统类（没有类加载器）。这个规则有一个例外：如果该选项没有提供参数，那么它就不适用于系统类。这使得在除系统类之外的所有类中禁用断言变得容易。`-disablesystemassertions`选项可以让你禁用所有系统类中的断言。要在特定的包或类中明确地启用断言，请使用`-enableassertions`（`-ea`）选项。这两个选项可以同时使用。例如，要运行`MyClass`应用程序，在包`com.wombat.fruitbat`（和任何子包）中启用断言，但在类`com.wombat.fruitbat.Brickbat`中禁用，使用下面的命令。
+
+```
+java -ea:com.wombat.fruitbat...-da:com.wombat.fruitbat.Brickbat MyClass
+-``禁用系统``assertions`或`-dsa
+```
+
+禁用所有系统类中的断言。
+
+`-enableassertions`[`:`[*packagename*]...|`:`*classname*] 或 `-ea`[`:`[*packagename*]...|`:`*classname*]
+
+启用断言。默认情况下，断言在所有的包和类中被禁用。在没有参数的情况下，`-enableassertions `(`-ea`)在所有包和类中启用断言。如果参数*packagename*以`....`..结尾，则开关启用所有包和类中的断言。的参数，开关会在指定的包和任何子包中启用断言。如果参数是简单的 `...`，则开关启用当前工作目录中未命名的包中的断言。有了*classname*参数，开关会启用指定类中的断言。
+
+`-enableassertions`（`-ea`）选项适用于所有的类加载器和系统类（没有类加载器）。这个规则有一个例外：如果这个选项没有提供参数，那么它就不适用于系统类。这使得在除系统类之外的所有类中启用断言变得容易。`-enablesystemassertions`选项提供了一个单独的开关来启用所有系统类中的断言。要明确地禁用特定包或类中的断言，请使用`-disableassertions`（`-da`）选项。如果一条命令包含这些开关的多个实例，那么在加载任何类之前，它们将被依次处理。例如，要运行`MyClass`应用程序，只在包`com.wombat.fruitbat`（和任何子包）中启用断言，但在类`com.wombat.fruitbat.Brickbat`中禁用，使用下面的命令。
+
+```
+java -ea:com.wombat.fruitbat...-da:com.wombat.fruitbat.Brickbat MyClass
+-``启用系统断言`或`-esa
+```
+
+启用所有系统类中的断言。
+
+```
+-help`, `-h`, 或 `-?
+```
+
+将帮助信息打印到错误流中。
+
+```
+--``帮助
+```
+
+将帮助信息打印到输出流。
+
+`-javaagent:`*jarpath*[`=`*options*] 。
+
+加载指定的Java编程语言代理。见`java.lang.instrument`。
+
+```
+--``显示版本
+```
+
+打印产品版本到输出流并继续。
+
+```
+-``显示版本
+```
+
+将产品版本打印到错误流中并继续。
+
+```
+--``显示模块分辨率
+```
+
+显示启动期间的模块分辨率输出。
+
+`-splash:`*imageepath*
+
+用*imagepath*指定的图像显示闪屏。如果有HiDPI比例的图像，会自动支持并使用。未缩放的图像文件名，如`image.ext`，应始终作为参数传递给`-splash`选项。提供的最合适的缩放图像会被自动拾取。
+
+例如，要在启动你的应用程序时显示`图像`目录中的`splash.gif`文件，使用以下选项。
+
+```
+-splash:images/splash.gif
+```
+
+更多信息见SplashScreen API文档。
+
+```
+-verbose:``类
+```
+
+显示每个加载的类的信息。
+
+```
+-verbose:gc
+```
+
+显示每个垃圾收集（GC）事件的信息。
+
+```
+-verbose:jni
+```
+
+显示关于使用本地方法和其他Java本地接口（JNI）活动的信息。
+
+```
+-verbose:``模块
+```
+
+显示正在使用的模块的信息。
+
+```
+--``版本
+```
+
+打印产品版本到输出流并退出。
+
+```
+-``版本
+```
+
+打印产品版本到错误流并退出。
+
+```
+-X
+```
+
+在错误流中打印关于额外选项的帮助。
+
+```
+--help-extra
+```
+
+在输出流中打印关于额外选项的帮助。
+
+`@`*argfile*
+
+指定一个或多个由`java`命令使用的以`@``为`前缀的参数文件。由于classpath中需要`.jar`文件，`java`命令行非常长的情况并不少见。`@`*argfile*选项克服了命令行长度的限制，它使启动器能够在外壳扩展之后，但在参数处理之前扩展参数文件的内容。参数文件中的内容被展开，因为否则，它们会在命令行中被指定，直到遇到`-disable-@files`选项。
+
+参数文件也可以包含主类名称和所有选项。如果一个参数文件包含了`java`命令所需的所有选项，那么命令行就可以简单地写成。
+
+`java @`*argfile*
+
+参见[java命令行参数文件](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#java-command-line-argument-files)，了解使用`@`-argfiles的描述和例子。
+
+## Java的额外选项
+
+下面的`java`选项是针对Java HotSpot虚拟机的通用选项。
+
+```
+-Xbatch
+```
+
+禁用后台编译。默认情况下，JVM将方法作为一个后台任务进行编译，在解释器模式下运行方法，直到后台编译完成。`-Xbatch`标志禁用了后台编译，这样所有方法的编译都作为前台任务进行，直到完成。这个选项等同于`-XX:-BackgroundCompilation`。
+
+`-Xbootclasspath/a:`*directories*|*zip*|*JAR-files*
+
+指定一个目录、JAR文件和ZIP档案的列表，以追加到默认的引导类路径的末尾。
+
+**Linux****和macOS：**冒号（`:`）在此列表中分隔实体。
+
+**窗口。**分号(`;`)将此列表中的实体分开。
+
+```
+-Xcheck:jni
+```
+
+对Java Native Interface（JNI）函数进行额外检查。
+
+以下检查被认为是表明本地代码存在重大问题，在这种情况下，JVM会以不可恢复的错误终止。
+
+·     进行调用的线程并不依附于JVM。
+
+·     进行调用的线程正在使用属于另一个线程的`JNIEnv``。`
+
+·     一个参数验证检查失败。
+
+o  一个`jfieldID`或`jmethodID`被检测为无效。比如说。
+
+§ 错误的类型
+
+§ 与错误的类别相关联
+
+o  检测到一个错误类型的参数。
+
+o  检测到一个无效的参数值。比如说。
+
+§ 不允许的地方为NULL
+
+§ 一个出界的数组索引，或帧容量
+
+§ 一个非UTF-8的字符串
+
+§ 一个无效的JNI引用
+
+§ 试图对一个不是由相应的`GetXXX`函数产生的参数使用`ReleaseXXX`函数。
+
+以下检查只导致警告被打印出来。
+
+·     在没有检查之前的JNI调用是否有待处理的异常的情况下进行了JNI调用，在可能有待处理的异常时，当前调用是不安全的。
+
+·     当一个JNI函数终止时，存在的JNI本地引用的数量超过了保证可用的数量。参见`EnsureLocalcapacity`函数。
+
+·     一个类描述符是装饰格式（`Lname;`），而它不应该是。
+
+·     允许使用`NULL`参数，但其使用是有问题的。
+
+·     在`Get/ReleasePrimitiveArrayCritical`或`Get/ReleaseStringCritical`的范围内调用其他JNI函数
+
+当使用这个选项时，预计会出现性能下降的情况。
+
+```
+-Xdebug
+```
+
+什么也不做。为了向后兼容而提供。
+
+```
+-Xdiag
+```
+
+显示额外的诊断信息。
+
+```
+-Xint
+```
+
+在纯解释模式下运行应用程序。禁用对本地代码的编译，所有字节码都由解释器执行。在这种模式下，及时编译器（JIT）所提供的性能优势并不存在。
+
+```
+-Xinternalversion
+```
+
+显示比`-version`选项更详细的JVM版本信息，然后退出。
+
+`-Xlog:`*选项*
+
+用Java虚拟机（JVM）统一日志框架配置或启用日志。参见[使用JVM统一日志框架启用日志](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#enable-logging-with-the-jvm-unified-logging-framework)。
+
+```
+-Xmixed
+```
+
+由解释器执行所有的字节码，除了热方法，这些方法被编译为本地代码。默认情况下是打开的。使用`-Xint`来关闭。
+
+`-Xmn`*尺寸*
+
+设置世代收集器中年轻一代（苗圃）的堆的初始和最大尺寸（字节）。附加字母`k`或`K`表示千字节，`m`或`M`表示兆字节，或`g`或`G`表示千兆字节。堆的年轻一代区域用于新对象。与其他区域相比，在这个区域执行GC的频率更高。如果年轻一代的大小太小，那么就会执行很多小的垃圾收集。如果大小太大，那么只执行完全的垃圾收集，这可能需要很长的时间来完成。建议你不要为G1收集器设置年轻一代的大小，并保持年轻一代的大小大于25%，小于其他收集器的整体堆大小的50%。下面的例子显示了如何使用各种单位将年轻一代的初始和最大尺寸设置为256MB。
+
+```
+-Xmn256m
+-Xmn262144k
+-Xmn268435456
+```
+
+你可以用`-XX:NewSize`来设置初始大小，用-XX`:MaxNewSize``来设置`最大大小，而不是用-`Xmn`选项来为年轻一代设置堆的初始和最大大小。
+
+`-Xms`*尺寸*
+
+设置堆的最小和初始大小（以字节为单位）。这个值必须是1024的倍数并且大于1MB。附加字母`k`或`K`表示千字节，`m`或`M`表示兆字节，或`g`或`G`表示千兆字节。下面的例子显示了如何使用各种单位将分配的内存大小设置为6MB。
+
+```
+-Xms6291456
+-Xms6144k
+-Xms6m
+```
+
+如果你不设置这个选项，那么初始大小将被设置为分配给老一代和年轻一代的大小之和。年轻一代的堆的初始大小可以用`-Xmn`选项或`-XX:NewSize`选项来设置。
+
+注意，`-XX:InitalHeapSize`选项也可以用来设置初始堆大小。如果它出现在命令行的`-Xms`之后，那么初始堆大小就被设置为`-XX:InitalHeapSize`指定的值。
+
+`-Xmx`*尺寸*
+
+指定堆的最大尺寸（以字节为单位）。这个值必须是1024的倍数并且大于2MB。加字母`k`或`K`表示千字节，加`m`或`M`表示兆字节，加`g`或`G`表示千兆字节。默认值是在运行时根据系统配置来选择的。对于服务器的部署，`-Xms`和`-Xmx`通常被设置为同一个值。下面的例子显示了如何使用各种单位将分配内存的最大允许大小设置为80MB。
+
+```
+-Xmx83886080
+-Xmx81920k
+-Xmx80m
+```
+
+`-Xmx`选项等同于`-XX:MaxHeapSize`。
+
+```
+-Xnoclassgc
+```
+
+禁用类的垃圾收集（GC）。这可以节省一些GC时间，从而缩短应用程序运行过程中的中断。当你在启动时指定`-Xnoclassgc``时`，应用程序中的类对象在GC过程中不被触动，并且总是被认为是活的。这可能会导致更多的内存被永久占用，如果不小心使用，会抛出一个内存不足的异常。
+
+```
+-Xrs
+```
+
+减少了JVM对操作系统信号的使用。关机钩子通过在关机时运行用户清理代码（如关闭数据库连接）来实现Java应用程序的有序关机，即使JVM突然终止。
+
+·     **Linux****和macOS。**
+
+o  JVM捕捉信号以实现关闭钩子的意外终止。JVM使用`SIGHUP`、`SIGINT`和`SIGTERM`来启动关闭钩子的运行。
+
+o  嵌入JVM的应用程序经常需要捕获信号，如`SIGINT`或`SIGTERM`，这可能导致对JVM信号处理程序的干扰。`-Xrs`选项可用来解决这个问题。当使用`-Xrs``时`，`SIGINT`、`SIGTERM`、`SIGHUP`和`SIGQUIT`的信号掩码不会被JVM改变，这些信号的信号处理程序也不会被安装。
+
+·     **窗口。**
+
+o  JVM观察控制台控制事件，以实现意外终止的关机钩。具体来说，JVM注册了一个控制台控制处理程序，开始关闭钩子处理，并对`CTRL_C_EVENT`、`CTRL_CLOSE_EVENT`、`CTRL_LOGOFF_EVENT`和`CTRL_SHUTDOWN_EVENT`返回`TRUE`。
+
+o  JVM使用类似的机制来实现为调试目的转储线程堆栈的功能。JVM使用`CTRL_BREAK_EVENT`来执行线程转储。
+
+o  如果JVM是作为服务运行的（例如，作为Web服务器的servlet引擎），那么它可以接收`CTRL_LOGOFF_EVENT`，但不应该启动关闭，因为操作系统实际上并没有终止该进程。为了避免这样可能的干扰，可以使用`-Xrs`选项。当使用`-Xrs`选项时，JVM不会安装一个控制台控制处理程序，这意味着它不会观察或处理`CTRL_C_EVENT`、`CTRL_CLOSE_EVENT`、`CTRL_LOGOFF_EVENT`或`CTRL_SHUTDOWN_EVENT`。
+
+指定`-Xrs``有`两个后果。
+
+·     **Linux****和macOS：**`SIGQUIT`线程转储不可用。
+
+·     **Windows****。**Ctrl + Break线程转储不可用。
+
+用户代码负责导致关机钩子的运行，例如，当JVM要被终止时，调用`System.exit()``。`
+
+`-Xshare:`*模式*
+
+设置班级数据共享（CDS）模式。
+
+该选项可能的*模式*参数包括以下内容。
+
+```
+汽车
+```
+
+如果可能的话，使用共享类数据（默认）。
+
+```
+关于
+```
+
+要求使用共享类数据，否则失败。
+
+**注意：**`-Xshare:on`选项仅用于测试目的，由于操作系统使用地址空间布局随机化，可能会导致间歇性的故障。这个选项不应该在生产环境中使用。
+
+```
+关闭
+```
+
+不要试图使用共享类数据。
+
+```
+-XshowSettings
+```
+
+显示所有设置，然后继续。
+
+`-XshowSettings:`*类别*
+
+显示设置和继续。这个选项可能的*类别*参数包括以下内容。
+
+```
+所有
+```
+
+显示所有类别的设置。这是默认值。
+
+```
+地点
+```
+
+显示与地域有关的设置。
+
+```
+财产
+```
+
+显示与系统属性有关的设置。
+
+```
+vm
+```
+
+显示JVM的设置。
+
+```
+系统
+```
+
+**Linux****。**显示主机系统或容器配置并继续。
+
+`-XSS`*尺寸*
+
+设置线程堆栈大小（以字节为单位）。加字母`k`或`K`表示KB，加`m`或`M`表示MB，加`g`或`G`表示GB。默认值取决于平台。
+
+·     Linux/x64（64位）：1024 KB
+
+·     macOS（64位）：1024KB
+
+·     Windows。默认值取决于虚拟内存
+
+下面的例子以不同的单位将线程堆栈大小设置为1024KB。
+
+```
+-Xss1m
+-Xss1024k
+-Xss1048576
+```
+
+该选项与`-XX:ThreadStackSize`类似。
+
+`--add-reads `*module*`=`*target-module*(`,`*target-module*)*。
+
+更新*模块*以读取*目标模块*，无论模块声明如何。*目标模块*可以是所有未命名的，以读取所有未命名的模块。
+
+`--``添加出口`*模块*`/`*包*`=`*目标模块*(`,`*目标模块*)*。
+
+更新*模块*，将*包*导出到*目标模块*，无论模块声明如何。*目标模块*可以是所有未命名的模块，以便导出到所有未命名的模块。
+
+`--``添加``-``打开`*模块*`/`*包*`=`*目标-模块*(`,`*目标-模块*)*。
+
+更新*模块*，将*包*打开到*目标模块*，而不考虑模块声明。
+
+`--limit-modules`*模块*[`,`*模块...*]
+
+规定了可观察模块的宇宙的极限。
+
+`--patch-module `*module*`=`*file*(`; `*file*)*
+
+用JAR文件或目录中的类和资源覆盖或增强一个模块。
+
+`--``来源`*版本*
+
+在源文件模式下设置源文件的版本。
+
+## MacOS的额外选项
+
+以下的额外选项是MacOS特有的。
+
+```
+-XstartOnFirstThread
+```
+
+在第一个（AppKit）线程上运行`main()`方法。
+
+`-Xdock:names=`*application_name*
+
+覆盖Dock中显示的默认应用程序名称。
+
+`-Xdock:``图标``=`*path_to_icon_file*
+
+覆盖Dock中显示的默认图标。
+
+## Java的高级选项
+
+这些`java`选项可以用来启用其他高级选项。
+
+```
+-XX:+UnlockDiagnosticVMOptions
+```
+
+解锁用于诊断JVM的选项。默认情况下，该选项被禁用，诊断选项不可用。
+
+不支持使用该选项所启用的命令行选项。如果你在使用这些选项时遇到问题，很可能需要你在不使用这些不支持的选项的情况下重现这个问题，然后Oracle支持部门才能协助调查。这些选项也有可能在没有任何警告的情况下被删除或改变其行为。
+
+```
+-XX:+UnlockExperimentalVMOptions
+```
+
+解锁在JVM中提供实验性功能的选项。默认情况下，该选项被禁用，实验性功能不可用。
+
+## Java的高级运行时选项
+
+这些`java`选项控制Java HotSpot VM的运行行为。
+
+`-XX:ActiveProcessorCount=`*x*
+
+覆盖虚拟机将用于计算它将用于各种操作（如垃圾收集和ForkJoinPool）的线程池的大小的CPU数量。
+
+虚拟机通常从操作系统中确定可用处理器的数量。在docker容器中运行多个Java进程时，这个标志对于划分CPU资源很有用。即使`UseContainerSupport`没有被启用，这个标志也会被尊重。参见`-XX:-UseContainerSupport``，了解`启用和禁用容器支持的描述。
+
+`-XX:AllocateHeapAt=`*path*
+
+取一个文件系统的路径，并使用内存映射在内存设备上分配对象堆。使用该选项可以使HotSpot VM在用户指定的其他内存设备上分配Java对象堆，如NV-DIMM。
+
+具有与DRAM相同语义的其他内存设备，包括原子操作的语义，可以代替DRAM用于对象堆，而不需要改变现有的应用程序代码。所有其他内存结构（如代码堆、元空间和线程堆）继续驻留在DRAM中。
+
+一些操作系统通过文件系统暴露了非DRAM内存。这些文件系统中的内存映射文件绕过了页面缓存，提供了虚拟内存与设备上物理内存的直接映射。现有的与堆有关的标志（如`-Xmx`和`-Xms`）和与垃圾收集有关的标志继续像以前一样工作。
+
+```
+-XX:-``紧凑型弦乐
+```
+
+禁用紧凑字符串功能。默认情况下，该选项被启用。当该选项被启用时，只包含单字节字符的Java字符串在内部被表示为单字节的字符串，并使用ISO-8859-1 / Latin-1编码存储。这将使只包含单字节字符的字符串所需的空间减少50%。对于至少包含一个多字节字符的Java字符串：这些字符串使用UTF-16编码，以每个字符2个字节的形式表示和存储。禁用紧凑字符串功能，将强制使用UTF-16编码作为所有Java字符串的内部表示。
+
+禁用 "紧凑型字符串 "可能有好处的情况包括以下几种。
+
+·     当知道一个应用程序绝大多数都会分配多字节的字符串时
+
+·     在从Java SE 8迁移到Java SE 9的过程中，观察到了性能下降的意外情况，而且分析表明Compact Strings引入了这种下降。
+
+在这两种情况下，禁用紧凑型字符串是有意义的。
+
+`-XX:ErrorFile=`*filename*
+
+指定当发生不可恢复的错误时，错误数据被写入的路径和文件名。默认情况下，这个文件是在当前工作目录下创建的，文件名是`hs_err_`*pid*`.log`，其中*pid*是遇到错误的进程的标识。
+
+下面的例子显示了如何设置默认的日志文件（注意，进程的标识符被指定为`%p`）。
+
+```
+-XX:ErrorFile=./hs_err_pid%p.log
+```
+
+·     **Linux****和macOS：**下面的例子显示了如何将错误日志设置为`/var/log/java/java_error.log`。
+
+```
+-XX:ErrorFile=/var/log/java/java_error.log
+```
+
+·     **Windows****。**下面的例子显示了如何将错误日志文件设置为`C:/log/java/java_error.log`。
+
+```
+-XX:ErrorFile=C:/log/java/java_error.log
+```
+
+如果该文件存在，并且可以写入，那么它将被覆盖。否则，如果该文件不能在指定的目录中创建（由于空间不足、权限问题或其他问题），那么该文件将在操作系统的临时目录中创建。
+
+·     **Linux****和macOS：**临时目录是`/tmp`。
+
+·     **Windows****。**临时目录由`TMP`环境变量的值指定；如果该环境变量没有定义，则使用`TEMP`环境变量的值。
+
+```
+-XX:+ExtensiveErrorReports
+```
+
+启用在`ErrorFile`中报告更多的错误信息。这个选项可以在需要最大信息的环境中打开 - 即使产生的日志可能相当大和/或包含可能被视为敏感的信息。这些信息可能在不同的版本和不同的平台上有所不同。默认情况下，这个选项是禁用的。
+
+`-XX:FlightRecorderOptions=`*parameter*`=`*value* (或)
+ `-XX:FlightRecorderOptions:`*参数*`=`*价值*
+
+设置控制JFR行为的参数。
+
+下面的列表包含了可用的JFR*参数*`=`*值*条目。
+
+`globalbuffersize=`*size*
+
+指定用于数据保留的主内存的总量。默认值是基于为`memorysize`指定的值。改变`memorysize`参数来改变全局缓冲区的大小。
+
+`maxchunksize=`*size*
+
+指定录音中数据块的最大尺寸（以字节为单位）。添加`m`或`M`来指定以兆字节（MB）为单位的大小，或添加`g`或`G`来指定以千兆字节（GB）为单位的大小。默认情况下，数据块的最大尺寸被设置为12MB。允许的最小值是1MB。
+
+`内存大小``=`*size*
+
+确定应该使用多少缓冲区内存，并根据指定的大小设置 `globalbuffersize `和 `numglobalbuffers `参数。附加`m`或`M`来指定以兆字节（MB）为单位的大小，或附加`g`或`G`来指定以千兆字节（GB）为单位的大小。默认情况下，内存大小被设置为10MB。
+
+```
+全局缓冲区数量
+```
+
+指定使用的全局缓冲区的数量。默认值是基于指定的内存大小。改变`memorysize`参数来改变全局缓冲区的数量。
+
+```
+old-object-queue-size=number-of-objects
+```
+
+要追踪的旧对象的最大数量。默认情况下，对象的数量被设置为256。
+
+`存储库``=`*路径*
+
+指定临时磁盘存储的存储库（一个目录）。默认情况下，使用系统的临时目录。
+
+`retransform=`{`true`|`false`}。
+
+指定是否应使用JVMTI对事件类进行重新转换。如果是false，在事件类被加载时，会添加仪表。默认情况下，这个参数是启用的。
+
+`samplethreads=`{`true`|`false`}。
+
+指定是否启用线程采样。只有当采样事件与此参数一起被启用时，线程采样才会发生。默认情况下，这个参数是启用的。
+
+`堆积深度``=`*深度*
+
+用于堆栈跟踪的堆栈深度。默认情况下，深度被设置为64个方法调用。最大是2048。大于64的值可能会产生大量的开销，并降低性能。
+
+`threadbuffersize=`*size*
+
+指定每线程的本地缓冲区大小（字节）。默认情况下，本地缓冲区大小被设置为8千字节，最小值为4千字节。覆盖这个参数可能会降低性能，不建议使用。
+
+你可以为多个参数指定数值，用逗号隔开它们。
+
+`-XX:LargePageSizeInBytes=`*size*
+
+设置JVM使用的最大大页面尺寸（以字节为单位）。*size*参数必须是环境所支持的有效的页面大小，才能产生任何作用。加字母`k`或`K`表示千字节，加`m`或`M`表示兆字节，加`g`或`G`表示千兆字节。默认情况下，大小被设置为0，意味着JVM将使用环境的默认大页面大小作为大页面的最大大小。参见[大页面](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#large-pages)。
+
+下面的例子描述了如何将大页面大小设置为1吉字节（GB）。
+
+```
+-XX:LargePageSizeInBytes=1g
+```
+
+`-XX:MaxDirectMemorySize=`*size*
+
+设置`java.nio`包，直接缓冲区分配的最大总大小（字节）。附加字母`k`或`K`表示千字节，`m`或`M`表示兆字节，或`g`或`G``表示千兆字节`。默认情况下，大小被设置为0，意味着JVM会自动选择NIO直接缓冲区分配的大小。
+
+下面的例子说明了如何以不同的单位将NIO大小设置为1024KB。
+
+```
+-XX:MaxDirectMemorySize=1m
+-XX:MaxDirectMemorySize=1024k
+-XX:MaxDirectMemorySize=1048576
+-XX:-MaxFDLimit
+```
+
+禁用将打开的文件描述符数量的软限制设置为硬限制的尝试。默认情况下，这个选项在所有平台上都是启用的，但在Windows上被忽略。你可能需要禁用的唯一时间是在Mac OS上，在那里使用该选项会强加一个10240的最大值，这比实际的系统最大值低。
+
+`-XX:NativeMemoryTracking=`*mode*
+
+指定跟踪JVM本地内存使用的模式。这个选项可能的*模式*参数包括如下。
+
+```
+关闭
+```
+
+指示不要跟踪JVM的本地内存使用。如果你没有指定`-XX:NativeMemoryTracking`选项，这是默认行为。
+
+```
+摘要
+```
+
+只跟踪JVM子系统的内存使用情况，如Java堆、类、代码和线程。
+
+```
+细节
+```
+
+除了跟踪JVM子系统的内存使用情况外，还要跟踪单个`CallSite`、单个虚拟内存区域及其承诺区域的内存使用情况。
+
+`-XX:ObjectAlignmentInBytes=`*alignment*
+
+设置Java对象的内存排列（以字节为单位）。默认情况下，该值被设置为8字节。指定的值应该是2的幂，并且必须在8和256（包括）的范围内。这个选项使得在大的Java堆尺寸下使用压缩指针成为可能。
+
+以字节为单位的堆大小限制计算如下。
+
+```
+4GB * ObjectAlignmentInBytes
+```
+
+**注意：**随着对齐值的增加，对象之间未使用的空间也会增加。因此，你可能无法从使用大的Java堆大小的压缩指针中实现任何好处。
+
+`-XX:OnError=`*string*
+
+设置一个自定义命令或一系列分号分隔的命令，在发生不可恢复的错误时运行。如果该字符串包含空格，那么必须用引号括起来。
+
+·     **Linux****和macOS：**下面的例子显示了如何使用`-XX:OnError`选项来运行`gcore`命令来创建一个核心映像，并启动`gdb`调试器在发生不可恢复的错误时附加到进程上（`%p`指定了当前进程的标识符）。
+
+```
+-XX:OnError="gcore %p;gdb -p %p"
+```
+
+·     **Windows****。**下面的例子显示了如何使用`-XX:OnError`选项来运行`userdump.exe`工具，以便在发生不可恢复的错误时获得崩溃转储（`%p`指定的是当前进程标识符）。这个例子假设在`PATH`环境变量中指定了`userdump.exe`工具的路径。
+
+```
+-XX:OnError="userdump.exe %p"
+```
+
+`-XX:OnOutOfMemoryError=`*string*
+
+设置当`OutOfMemoryError`异常首次抛出时要运行的一个自定义命令或一系列分号分隔的命令。如果该字符串包含空格，那么必须用引号括起来。关于命令字符串的例子，见`-XX:OnError`选项的描述。
+
+```
+-XX:+PrintCommandLineFlags
+```
+
+启用打印出现在命令行中的符合人体工程学的JVM标志。了解JVM设置的符合人体工程学的值是非常有用的，比如堆空间大小和选择的垃圾收集器。默认情况下，这个选项是禁用的，标志不被打印。
+
+```
+-XX:+PreserveFramePointer
+```
+
+在使用RBP寄存器作为通用寄存器（`-XX:-PreserveFramePointer`）和使用RBP寄存器来保存当前执行方法的帧指针（`-XX:+PreserveFramePointer `。如果帧指针可用，那么外部剖析工具（例如，Linux perf）可以构建更准确的堆栈跟踪。
+
+```
+-XX:+PrintNMTStatistics
+```
+
+启用本地内存跟踪时，在JVM退出时启用打印收集的本地内存跟踪数据（见`-XX:NativeMemoryTracking`）。默认情况下，该选项被禁用，本地内存跟踪数据不会被打印。
+
+`-XX:SharedArchiveFile=`*path*
+
+指定类数据共享（CDS）存档文件的路径和名称。
+
+见[应用类数据共享](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#application-class-data-sharing)。
+
+`-XX:SharedArchiveConfigFile`=*shared_config_file*
+
+指定添加到存档文件的额外共享数据。
+
+`-XX:SharedClassListFile=`*file_name*
+
+指定包含要存储在类数据共享（CDS）档案中的类的名称的文本文件。这个文件每行包含一个类的全名，除了斜线（`/`）取代点（`. `）。例如，要指定`java.lang.Object`和`hello.Main``这两个类`，创建一个包含以下两行的文本文件。
+
+```
+java/lang/Object
+你好/主
+```
+
+你在这个文本文件中指定的类应该包括应用程序通常使用的类。它们可以包括应用、扩展或引导类路径中的任何类。
+
+见[应用类数据共享](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#application-class-data-sharing)。
+
+```
+-XX:+ShowCodeDetailsInExceptionMessages
+```
+
+启用打印改进的`NullPointerException`消息。当应用程序抛出一个`NullPointerException``时`，该选项使JVM能够分析程序的字节码指令，以精确地确定哪个引用是`空的`，并通过一个null-detail消息来描述该源。null-detail消息由`NullPointerException.getMessage()`计算并返回，并将与方法、文件名和行号一起作为异常消息打印。默认情况下，这个选项是启用的。
+
+```
+-XX:+ShowMessageBoxOnError
+```
+
+当JVM遇到不可恢复的错误时，可以显示一个对话框。这可以防止JVM退出，并保持进程处于活动状态，以便你可以将调试器附加到它上面，调查错误的原因。默认情况下，这个选项是禁用的。
+
+`-XX:StartFlightRecording=`*parameter*`=`*value*
+
+启动Java应用程序的JFR记录。这个选项等同于`JFR.start`诊断命令，在运行时启动一个记录。在启动JFR记录时，你可以设置以下*参数*`=`值项。
+
+`延迟``=`*时间*
+
+指定Java应用程序启动时间和录音开始时间之间的延迟。附加`s`来指定以秒为单位的时间，`m`表示分钟，`h`表示小时，`d`表示天（例如，`10m`表示10分钟）。默认情况下，没有延迟，这个参数被设置为0。
+
+`磁盘``=`{`true`|`false`}
+
+指定是否向磁盘存储库写入临时数据。默认情况下，这个参数被设置为`false`。要启用它，请将该参数设置为`true`。
+
+`dumponexit=`{`true`|`false`}
+
+指定在JVM关闭时是否转储运行中的记录。如果启用并且没有输入`文件名`，记录将被写入进程开始的目录中的一个文件。文件名是系统生成的名称，包含进程ID、记录ID和当前时间戳，类似于`hotspot-pid-47496-id-1-2018_01_25_19_10_41.jfr`。默认情况下，这个参数是禁用的。
+
+`持续时间``=`*时间*
+
+指定录音的持续时间。附加`s`来指定以秒为单位的时间，`m`代表分钟，`h`代表小时，`d`代表天（例如，指定`5h`意味着5小时）。默认情况下，持续时间不受限制，这个参数被设置为0。
+
+`文件名``=`*路径*
+
+指定录音停止时写入的文件的路径和名称，例如。
+
+·     `录音``.jfr`
+
+·     `/home/user/recordings/recording.jfr`
+
+·     `c:\recordings\recording.jfr`
+
+`名称``=`*标识符*
+
+同时获取一个录音的名称和标识符。
+
+`maxage=`*time*
+
+指定录制时要保留的最大磁盘数据的年龄。这个参数只有在`磁盘`参数设置为`真时`才有效。附加`s`来指定时间，单位是秒，`m`代表分钟，`h`代表小时，`d`代表天（例如，指定`30s`意味着30秒）。默认情况下，最大年龄没有限制，这个参数被设置为`0s`。
+
+`maxsize=`*size*
+
+指定录制时要保留的磁盘数据的最大尺寸（字节）。这个参数只有在`磁盘`参数设置为 `"true "`时才有效。该值不能小于用`-XX:FlightRecorderOptions`设置的`maxchunksize`参数的值。附加`m`或`M`来指定以兆字节为单位的大小，或附加`g`或`G`来指定以千兆字节为单位的大小。默认情况下，磁盘数据的最大尺寸没有限制，这个参数被设置为`0`。
+
+`path-to-gc-roots=`{`true`|`false`}
+
+指定是否在记录结束后收集垃圾收集（GC）根的路径。默认情况下，这个参数是禁用的。
+
+GC根的路径对于发现内存泄漏很有用，但收集它很费时。只有当你为一个你怀疑有内存泄漏的应用程序开始记录时才启用这个选项。如果`设置`参数被设置为`profile`，潜在泄漏对象被分配的堆栈跟踪就会包括在收集的信息中。
+
+`设置``=`*路径*
+
+指定事件设置文件（JFC类型）的路径和名称。默认情况下，使用`default.jfc`文件，它位于`JAVA_HOME/lib/jfr``中`。这个默认设置文件收集了一组预定义的信息，开销不大，所以对性能的影响最小，可以用于连续运行的录音。
+
+还提供了第二个设置文件profile.jfc，它比默认配置提供了更多的数据，但可能有更多的开销并影响性能。当需要更多信息时，请在短时间内使用这种配置。
+
+你可以为多个参数指定值，用逗号隔开它们。事件设置和.jfc选项可以用以下语法指定。
+
+`选项``=`*价值*
+
+指定要修改的选项值。要列出可用的选项，请使用 `JAVA_HOME`/bin/jfr 工具。
+
+`事件设置`=*值*
+
+指定要修改的事件设置值。使用这种形式。#= 要添加一个新的事件设置，在事件名称前加上 "+"。
+
+你可以为多个事件设置和.jfc选项指定值，用逗号将它们分开。如果参数和.jfc选项之间发生冲突，参数优先。对于时间跨度值，例如20ms，可以省略空格分隔符。关于设置语法的更多信息，请参阅jdk.jfr包的Javadoc。
+
+`-XX:ThreadStackSize=`*size*
+
+设置Java线程堆栈大小（以千字节为单位）。使用缩放后缀，如`k`，导致千字节值的缩放，因此，`-XX:ThreadStackSize=1k`将Java线程堆栈大小设置为1024*1024字节或1兆字节。默认值取决于平台。
+
+·     Linux/x64（64位）：1024 KB
+
+·     macOS（64位）：1024KB
+
+·     Windows。默认值取决于虚拟内存
+
+下面的例子显示了如何以不同的单位将线程栈大小设置为1兆字节。
+
+```
+-XX:ThreadStackSize=1k
+-XX:ThreadStackSize=1024
+```
+
+这个选项与`-Xss`相似。
+
+```
+-XX:-UseCompressedOops
+```
+
+禁止使用压缩的指针。默认情况下，该选项被启用，并使用压缩指针。这将自动限制符合人体工程学的Java堆的最大尺寸，使其成为压缩指针所能覆盖的最大内存量。默认情况下，这个范围是32GB。
+
+在启用压缩的OOPS时，对象引用被表示为32位偏移量，而不是64位指针，这通常会在运行Java堆大小小于压缩的OOPS指针范围的应用程序时提高性能。该选项仅适用于64位JVM。
+
+在Java堆大小超过32GB的情况下，使用压缩指针是可能的。参见`-XX:ObjectAlignmentInBytes`选项。
+
+```
+-XX:-UseContainerSupport
+```
+
+虚拟机现在提供了自动容器检测支持，这使得虚拟机能够确定运行在docker容器中的Java进程可用的内存量和处理器数量。它使用这些信息来分配系统资源。这种支持只在Linux x64平台上可用。如果支持，这个标志的默认值是`true`，容器支持在默认情况下被启用。它可以用`-XX:-UseContainerSupport`禁用。
+
+统一日志可用于帮助诊断与此支持有关的问题。
+
+使用 `-Xlog:os+container=trace `以获得最大的容器信息记录。参见[使用JVM统一日志框架启用日志](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#enable-logging-with-the-jvm-unified-logging-framework)，以了解使用统一日志的描述。
+
+```
+-XX:+UseHugeTLBFS
+```
+
+**仅限Linux。**这个选项等同于指定`-XX:+UseLargePages`。这个选项在默认情况下是禁用的。这个选项在保留内存时预先分配了所有的大页面；因此，JVM不能动态地增加或缩小大页面的内存区域；如果你想要这种行为，请参见`-XX:UseTransparentHugePages``。`
+
+[见大页](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#large-pages)。
+
+```
+-XX:+UseLargePages
+```
+
+启用大页面内存的使用。默认情况下，这个选项是禁用的，不使用大页面内存。
+
+[见大页](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#large-pages)。
+
+```
+-XX:+UseTransparentHugePages
+```
+
+**仅限Linux。**启用可以动态增长或缩小的大页面。这个选项在默认情况下是禁用的。你可能会遇到透明的大页面的性能问题，因为操作系统会移动其他页面来创建大页面；这个选项是为了实验而提供的。
+
+```
+-XX:+AllowUserSignalHandlers
+```
+
+启用应用程序安装信号处理程序的功能。默认情况下，这个选项是禁用的，应用程序不允许安装信号处理程序。
+
+`-XX:VMOptionsFile=`*filename*
+
+允许用户在一个文件中指定虚拟机选项，例如，`java -XX:VMOptionsFile=/var/my_vm_options HelloWorld`。
+
+## java的高级JIT编译器选项
+
+这些`java`选项控制由Java HotSpot VM执行的动态即时编译（JIT）。
+
+`-XX:AllocateInstancePrefetchLines=`*lines*
+
+设置在实例分配指针之前预取的行数。默认情况下，预取的行数被设置为1。
+
+```
+-XX:AllocateInstancePrefetchLines=1
+```
+
+`-XX:AllocatePrefetchDistance=`*size*
+
+设置对象分配的预取距离的大小（字节）。即将被写入新对象值的内存，从最后分配的对象的地址开始预取到这个距离。每个Java线程都有自己的分配点。
+
+负值表示预取距离是根据平台来选择的。正值是指预取的字节数。附加字母`k`或`K`表示千字节，`m`或`M`表示兆字节，或`g`或`G`表示千兆字节。默认值被设置为-1。
+
+下面的例子显示了如何设置预取距离为1024字节。
+
+```
+-XX:AllocatePrefetchDistance=1024
+```
+
+`-XX:AllocatePrefetchInstr=`*instruction*
+
+设置预取指令，以便在分配指针之前进行预取。可能的值从0到3，值后面的实际指令取决于平台。默认情况下，预取指令被设置为0。
+
+```
+-XX:AllocatePrefetchInstr=0
+```
+
+`-XX:AllocatePrefetchLines=`*lines*
+
+设置在最后一次对象分配后通过使用编译代码中产生的预取指令加载的缓存行数。如果最后分配的对象是一个实例，默认值是1，如果是一个数组，默认值是3。
+
+下面的例子显示了如何将加载的高速缓存行数设置为5。
+
+```
+-XX:AllocatePrefetchLines=5
+```
+
+`-XX:AllocatePrefetchStepSize=`*size*
+
+设置顺序预取指令的步长（以字节为单位）。附加字母`k`或`K`表示千字节，`m`或`M`表示兆字节，`g`或`G`表示千兆字节。默认情况下，步长被设置为16字节。
+
+```
+-XX:AllocatePrefetchStepSize=16
+```
+
+`-XX:AllocatePrefetchStyle=`*style*
+
+设置预取指令的生成代码风格。*style*参数是一个从0到3的整数。
+
+```
+0
+```
+
+不要产生预取指令。
+
+```
+1
+```
+
+在每次分配后执行预取指令。这是默认设置。
+
+```
+2
+```
+
+使用线程本地分配块（TLAB）水印指针来确定何时执行预取指令。
+
+```
+3
+```
+
+每条高速缓存线产生一条预取指令。
+
+```
+-XX:+BackgroundCompilation
+```
+
+启用后台编译。这个选项在默认情况下是启用的。要禁用后台编译，请指定`-XX:-BackgroundCompilation`（这等同于指定`-Xbatch`）。
+
+`-XX:CICompilerCount=`*threads*
+
+设置用于编译的编译器线程的数量。默认情况下，编译器线程的数量是根据CPU的数量和可用于编译代码的内存自动选择的。下面的例子显示了如何将线程数设置为2。
+
+```
+-XX:CICompilerCount=2
+-XX:+UseDynamicNumberOfCompilerThreads
+```
+
+动态创建编译器线程，达到`-XX:CICompilerCount`指定的限制。这个选项在默认情况下是启用的。
+
+`-XX:CompileCommand=`*命令*`,`*方法*[`,`*选项*] 。
+
+指定对一个*方法*执行的*命令*。例如，要排除`String`类的`indexOf()`方法被编译，请使用下面的方法。
+
+```
+-XX:CompileCommand=exclude,java/lang/String.indexOf
+```
+
+注意，要指定完整的类名，包括所有的包和子包，用斜线（`/`）分开。为了方便剪切和粘贴操作，也可以使用由`-XX:+PrintCompilation`和`-XX:+LogCompilation`选项产生的方法名称格式。
+
+```
+-XX:CompileCommand=exclude,java.lang.String::indexOf
+```
+
+如果指定的方法没有签名，那么该命令将应用于所有具有指定名称的方法。然而，你也可以在类文件格式中指定方法的签名。在这种情况下，你应该用引号把参数括起来，因为否则shell会把分号当作命令的结尾。例如，如果你想只排除`String`类的`indexOf(String)`方法被编译，使用下面的方法。
+
+```
+-XX:CompileCommand="exclude,java/lang/String.indexOf,(Ljava/lang/String;)I"
+```
+
+你也可以使用星号（*）作为类和方法名称的通配符。例如，要排除所有类中的所有`indexOf()`方法被编译，使用下面的方法。
+
+```
+-XX:CompileCommand=exclude,*.indexOf
+```
+
+逗号和句号是空格的别名，使之更容易通过shell传递编译器命令。你可以用空格作为分隔符，将参数用引号括起来，传递给 `-XX:CompileCommand ``的参数。`
+
+```
+-XX:CompileCommand="exclude java/lang/String indexOf"
+```
+
+注意，在使用`-XX:CompileCommand`选项解析了命令行上传递的命令后，JIT编译器会从`.hotspot_compiler`文件中读取命令。你可以在这个文件中添加命令，或者使用`-XX:CompileCommandFile`选项指定一个不同的文件。
+
+要添加几个命令，可以多次指定`-XX:CompileCommand`选项，或者用新行分隔符（`\n`）分隔每个参数。以下命令是可用的。
+
+```
+突破
+```
+
+在调试JVM时设置一个断点，在指定方法的编译开始时停止。
+
+```
+只编译
+```
+
+除了指定的方法外，排除所有的方法进行编译。作为一种选择，你可以使用`-XX:CompileOnly`选项，它可以让你指定几个方法。
+
+```
+唐丁线
+```
+
+禁止对指定的方法进行内联。
+
+```
+排除
+```
+
+从编译中排除指定的方法。
+
+```
+帮助
+```
+
+打印`-XX:CompileCommand`选项的帮助信息。
+
+```
+内联
+```
+
+试图内联指定的方法。
+
+```
+原木
+```
+
+排除所有方法的编译日志（使用`-XX:+LogCompilation`选项），除了指定的方法。默认情况下，对所有编译过的方法都进行日志记录。
+
+```
+选择
+```
+
+将一个JIT编译选项传递给指定的方法，以代替最后一个参数（`option`）。编译选项被设置在最后，在方法名称之后。例如，要为`StringBuffer`类的`append()`方法启用`BlockLayoutByFrequency`选项，使用下面的方法。
+
+```
+-XX:CompileCommand=option,java/lang/StringBuffer.append, BlockLayoutByFrequency
+```
+
+你可以指定多个编译选项，用逗号或空格分隔。
+
+```
+印刷品
+```
+
+打印指定方法编译后生成的汇编程序代码。
+
+```
+安静
+```
+
+指示不打印编译命令。默认情况下，你用`-XX:CompileCommand`选项指定的命令会被打印出来；例如，如果你从编译中排除了`String`类的`indexOf()`方法，那么以下内容会被打印到标准输出。
+
+```
+CompilerOracle``：排除``java/lang/String.indexOf
+```
+
+你可以通过在其他`-XX:CompileCommand`选项之前指定`-XX:CompileCommand=quiet`选项来抑制这种情况。
+
+`-XX:CompileCommandFile=`*filename*
+
+设置读取JIT编译器命令的文件。默认情况下，`.hotspot_compiler`文件被用来存储JIT编译器执行的命令。
+
+命令文件中的每一行都代表一个命令、一个类名和一个使用该命令的方法名。例如，这一行打印的是`String`类的`toString()`方法的汇编代码。
+
+```
+print java/lang/String toString
+```
+
+如果你使用JIT编译器对方法执行的命令，那么请看`-XX:CompileCommand`选项。
+
+`-XX:CompilerDirectivesFile=`*file*
+
+当程序启动时，将文件中的指令添加到指令栈中。参见[编译器控制](https://docs.oracle.com/en/java/javase/12/vm/compiler-control1.html#GUID-94AD8194-786A-4F19-BFFF-278F8E237F3A)。
+
+`-XX:CompilerDirectivesFile`选项必须与`-XX:UnlockDiagnosticVMOptions`选项一起使用，后者可以解锁JVM诊断选项。
+
+```
+-XX:+CompilerDirectivesPrint
+```
+
+当程序启动或添加新指令时，打印指令栈。
+
+`-XX:+CompilerDirectivesPrint`选项必须与`-XX:UnlockDiagnosticVMOptions`选项一起使用，后者可以解锁JVM诊断选项。
+
+`-XX:CompileOnly=`*methods*
+
+设置应限制编译的方法列表（用逗号分隔）。只有指定的方法才会被编译。用完整的类名（包括包和子包）来指定每个方法。例如，为了只编译`String`类的`length()`方法和`List`类的`size()`方法，请使用下面的方法。
+
+```
+-XX:CompileOnly=java/lang/String.length,java/util/List.size
+```
+
+注意，要指定完整的类名，包括所有的包和子包，用斜线（`/`）分开。为了方便剪切和粘贴操作，也可以使用由`-XX:+PrintCompilation`和`-XX:+LogCompilation`选项产生的方法名称格式。
+
+```
+-XX:CompileOnly=java.lang.String::length, java.util.List::size
+```
+
+虽然不支持通配符，但你可以只指定类或包的名称来编译该类或包中的所有方法，也可以只指定方法来编译任何类中具有此名称的方法。
+
+```
+-XX:CompileOnly=java/lang/String
+-XX:CompileOnly=java/lang
+-XX:CompileOnly=.length
+```
+
+`-XX:CompileThresholdScaling=`*scale*
+
+提供对首次编译的统一控制。这个选项控制分层和非分层操作模式的方法何时被首次编译。`CompileThresholdScaling`选项有一个介于0和+Inf之间的浮点值，并根据当前的操作模式（包括分层和非分层）对阈值进行缩放。将`CompileThresholdScaling``设置`为小于1.0的值会导致提前编译，而大于1.0的值会延迟编译。将`CompileThresholdScaling``设置`为0，相当于禁用编译。
+
+```
+-XX:+DoEscapeAnalysis
+```
+
+启用转义分析的使用。这个选项默认是启用的。要禁止使用转义分析，请指定`-XX:-DoEscapeAnalysis`。
+
+`-XX:InitialCodeCacheSize=`*size*
+
+设置初始代码缓存大小（以字节为单位）。加字母`k`或`K`表示千字节，加`m`或`M`表示兆字节，加`g`或`G`表示千兆字节。默认值取决于平台。初始代码缓存大小不应该小于系统的最小内存页大小。下面的例子显示了如何设置初始代码缓存大小为32KB。
+
+```
+-XX:InitialCodeCacheSize=32k
+-XX:+Inline
+```
+
+启用方法内联。这个选项默认是启用的，以提高性能。要禁用方法内联，请指定`-XX:-Inline`。
+
+`-XX:InlineSmallCode=`*size*
+
+设置已经编译的方法的最大代码大小（以字节为单位），可以被内联。这个标志只适用于C2编译器。加字母`k`或`K`表示千字节，加`m`或`M`表示兆字节，加`g`或`G`表示千兆字节。默认值取决于平台和分层编译是否被启用。在下面的例子中，它被设置为1000字节。
+
+```
+-XX:InlineSmallCode=1000
+-XX:+LogCompilation
+```
+
+启用将编译活动记录到当前工作目录下一个名为`hotspot.log``的`文件。你可以使用`-XX:LogFile`选项指定一个不同的日志文件路径和名称。
+
+默认情况下，这个选项是禁用的，编译活动不会被记录下来。`-XX:+LogCompilation`选项必须与`-XX:UnlockDiagnosticVMOptions`选项一起使用，后者可以解锁JVM的诊断选项。
+
+你可以通过使用`-XX:+PrintCompilation`选项来启用粗略的诊断输出，在每次编译一个方法时将信息打印到控制台。
+
+`-XX:FreqInlineSize=`*size*
+
+设置被内联的热方法的最大字节码大小（以字节为单位）。这个标志只适用于C2编译器。附加字母`k`或`K`表示千字节，`m`或`M`表示兆字节，或`g`或`G``表示千兆字节`。默认值取决于平台。在下面的例子中，它被设置为325字节。
+
+```
+-XX:FreqInlineSize=325
+```
+
+`-XX:MaxInlineSize=`*size*
+
+设置一个冷方法的最大字节码大小（以字节为单位），以便被内联。这个标志只适用于C2编译器。附加字母`k`或`K`表示千字节，`m`或`M`表示兆字节，或`g`或`G``表示千兆字节`。默认情况下，最大字节码大小被设置为35字节。
+
+```
+-XX:MaxInlineSize=35
+```
+
+`-XX:C1MaxInlineSize=`*size*
+
+设置被内联的冷方法的最大字节码大小（以字节为单位）。这个标志只适用于C1编译器。加字母`k`或`K`表示千字节，加`m`或`M`表示兆字节，加`g`或`G`表示千兆字节。默认情况下，最大字节码大小被设置为35字节。
+
+```
+-XX:MaxInlineSize=35
+```
+
+`-XX:MaxTrivialSize=`*size*
+
+设置被内联的琐碎方法的最大字节码大小（以字节为单位）。这个标志只适用于C2编译器。加字母`k`或`K`表示千字节，加`m`或`M`表示兆字节，加`g`或`G`表示千兆字节。默认情况下，一个琐碎方法的最大字节码大小被设置为6字节。
+
+```
+-XX:MaxTrivialSize=6
+```
+
+`-XX:C1MaxTrivialSize=`*size*
+
+设置被内联的琐碎方法的最大字节码大小（以字节为单位）。这个标志只适用于C1编译器。加字母`k`或`K`表示千字节，加`m`或`M`表示兆字节，加`g`或`G`表示千兆字节。默认情况下，一个琐碎方法的最大字节码大小被设置为6字节。
+
+```
+-XX:MaxTrivialSize=6
+```
+
+`-XX:MaxNodeLimit=`*nodes*
+
+设置单一方法编译时使用的最大节点数。默认情况下，该值取决于所启用的功能。在下面的例子中，最大节点数被设置为100,000。
+
+```
+-XX:MaxNodeLimit=100000
+```
+
+`-XX:NonNMethodCodeHeapSize=`*size*
+
+设置包含非方法代码的代码段的大小（字节）。
+
+一个非方法的代码段，包含非方法的代码，如编译器缓冲区和字节码解释器。这种代码类型会永远留在代码缓存中。这个标志只在`-XX:SegmentedCodeCache`被启用时使用。
+
+`-XX:NonProfiledCodeHeapSize=`*size*
+
+设置包含非profiled方法的代码段的字节大小。这个标志只在`-XX:SegmentedCodeCache`被启用时使用。
+
+```
+-XX:+OptimizeStringConcat
+```
+
+`启用对字符串`连接操作的优化。这个选项默认是启用的。要禁用`字符串`连接操作的优化，请指定`-XX:-OptimizeStringConcat`。
+
+```
+-XX:+PrintAssembly
+```
+
+通过使用外部的`hsdis-<arch>.so`或`.dll`库，能够打印字节码和本地方法的汇编代码。对于Windows上的64位虚拟机，它是`hsdis-amd64.dll`。这让你可以看到生成的代码，这可能有助于你诊断性能问题。
+
+默认情况下，这个选项被禁用，汇编代码不被打印。`-XX:+PrintAssembly`选项必须与`-XX:UnlockDiagnosticVMOptions`选项一起使用，后者可以解锁JVM的诊断选项。
+
+`-XX:ProfiledCodeHeapSize=`*size*
+
+设置包含剖析方法的代码段的大小（字节）。这个标志只在`-XX:SegmentedCodeCache`被启用时使用。
+
+```
+-XX:+PrintCompilation
+```
+
+启用JVM的粗略诊断输出，在每次编译一个方法时向控制台打印一条信息。这可以让你看到哪些方法实际被编译了。默认情况下，这个选项被禁用，诊断输出不会被打印出来。
+
+你也可以通过使用`-XX:+LogCompilation`选项将编译活动记录到一个文件中。
+
+```
+-XX:+PrintInlining
+```
+
+启用打印内联决定。这可以让你看到哪些方法被内联了。
+
+默认情况下，该选项被禁用，不打印内联信息。`-XX:+PrintInlining`选项必须与`-XX:+UnlockDiagnosticVMOptions`选项一起使用，后者可以解锁JVM诊断选项。
+
+`-XX:ReservedCodeCacheSize=`*size*
+
+设置JIT编译代码的最大代码缓存大小（单位：字节）。加字母`k`或`K`表示千字节，加`m`或`M`表示兆字节，加`g`或`G`表示千兆字节。默认的最大代码缓存大小为240MB；如果你用选项`-XX:-TieredCompilation``禁用分层编译`，那么默认大小为48MB。这个选项的限制是2GB，否则会产生一个错误。最大的代码缓存大小不应该小于初始代码缓存大小；见选项`-XX:InitialCodeCacheSize`。
+
+`-XX:RTMAbortRatio=`*abort_ratio*
+
+指定RTM中止率是以所有执行的RTM事务的百分比（%）指定的。如果中止的事务数量大于这个比率，那么编译后的代码将被取消优化。这个比率在启用`-XX:+UseRTMDeopt`选项时使用。这个选项的默认值是50。这意味着如果50%的交易被中止，编译后的代码将被取消优化。
+
+`-XX:RTMRetryCount=`*number_of_retries*
+
+指定当RTM锁定代码被中止或繁忙时，在退回到正常锁定机制之前，重新尝试的次数。这个选项的默认值是5，`-XX:UseRTMLocking`选项必须被启用。
+
+```
+-XX:+SegmentedCodeCache
+```
+
+启用代码缓冲区的分段。没有`-XX:+SegmentedCodeCache`，代码缓存由一个大段组成。有了`-XX:+SegmentedCodeCache`，我们有独立的段，用于非方法、分析方法和非分析方法的代码。这些段在运行时不会被调整大小。如果分层编译被启用(`-XX:+TieredCompilation `)，并且`-XX:ReservedCodeCacheSize `>= 240 MB，则该功能默认启用。其优点是可以更好地控制内存占用，减少代码碎片，并且由于改进了定位性而有更好的iTLB/iCache行为。iTLB/iCache是一个CPU专用术语，意思是指令转换旁观缓冲区（ITLB）。ICache是CPU中的一个指令缓冲区。代码缓存的实现可以在文件中找到。`/share/vm/code/codeCache.cpp`。
+
+`-XX:StartAggressiveSweepingAt=`*percent*
+
+强制对活动方法进行堆栈扫描，当只有给定百分比的代码缓存是空闲时，积极地删除未使用的代码。默认值是10%。
+
+```
+-XX:-``分层编译
+```
+
+禁用分层编译的使用。默认情况下，这个选项是启用的。
+
+`-XX:UseSSE=`*version*
+
+启用指定版本的SSE指令集。默认情况下被设置为最高支持版本（仅适用于x86）。
+
+`-XX:UseAVX=`*version*
+
+启用指定版本的AVX指令集。默认情况下被设置为最高支持版本（仅适用于x86）。
+
+```
+-XX:+UseAES
+```
+
+对于支持AES的硬件，启用基于硬件的AES内含物。在具有必要指令的硬件上，这个选项默认是打开的。`-XX:+UseAES`是与UseAESIntrinsics一起使用的。控制本征的标志现在需要选项`-XX:+UnlockDiagnosticVMOptions`。
+
+```
+-XX:+UseAESIntrinsics
+```
+
+启用AES内含物。指定`-XX:+UseAESIntrinsics`等同于同时启用`-XX:+UseAES`。要禁用基于硬件的AES内含物，请指定`-XX:-UseAES -XX:-UseAESIntrinsics`。例如，要启用硬件AES，使用以下标志。
+
+```
+-XX:+UseAES -XX:+UseAESIntrinsics
+```
+
+控制本征的标志现在需要选项`-XX:+UnlockDiagnosticVMOptions`。
+
+```
+-XX:+UseAESCTRIntrinsics
+```
+
+类似于`-XX:+UseAESIntrinsics`，可以启用AES/CTR的内在因素。
+
+```
+-XX:+UseGHASHIntrinsics
+```
+
+控制GHASH内含物的使用。在支持相应指令的平台上默认为启用。控制内含物的标志现在需要选项`-XX:+UnlockDiagnosticVMOptions`。
+
+```
+-XX:+UseBASE64Intrinsics
+```
+
+控制`java.util.Base64`的加速BASE64编码程序的使用。在支持它的平台上默认为启用。控制本征的标志现在需要选项 `-XX:+UnlockDiagnosticVMOptions`。
+
+```
+-XX:+UseAdler32Intrinsics
+```
+
+控制`java.util.zip.Adler32`校验算法的使用，该算法的本质是Adler32。在支持它的平台上默认为启用。控制本征的标志现在需要选项 `-XX:+UnlockDiagnosticVMOptions`。
+
+```
+-XX:+UseCRC32Intrinsics
+```
+
+控制`java.util.zip.CRC32`的CRC32内含物的使用。在支持该功能的平台上默认为启用。控制内含物的标志现在需要选项`-XX:+UnlockDiagnosticVMOptions`。
+
+```
+-XX:+UseCRC32CIntrinsics
+```
+
+控制`java.util.zip.CRC32C`的CRC32C本征的使用。在支持该功能的平台上默认为启用。控制本征的标志现在需要选项`-XX:+UnlockDiagnosticVMOptions`。
+
+```
+-XX:+UseSHA
+```
+
+为某些硬件的SHA加密哈希函数启用基于硬件的内在因素。`UseSHA`选项与`UseSHA1Intrinsics`、`UseSHA256Intrinsics`和`UseSHA512Intrinsics`选项一起使用。
+
+在支持相应指令的机器上，`UseSHA`和`UseSHA*Intrinsics`标志被默认启用。
+
+该特性仅适用于使用 `sun.security.provider.Sun `provider 进行 SHA 操作时。控制本征的标志现在需要选项 `-XX:+UnlockDiagnosticVMOptions`。
+
+要禁用所有基于硬件的SHA本征，指定`-XX:-UseSHA`。要想只禁用某个特定的SHA内含物，请使用相应的选项。例如：`-XX:-UseSHA256Intrinsics`。
+
+```
+-XX:+UseSHA1Intrinsics
+```
+
+启用SHA-1加密哈希函数的内在因素。现在，控制本征的标志需要选项`-XX:+UnlockDiagnosticVMOptions`。
+
+```
+-XX:+UseSHA256Intrinsics
+```
+
+启用了SHA-224和SHA-256加密哈希函数的内含物。控制内含物的标志现在需要选项`-XX:+UnlockDiagnosticVMOptions`。
+
+```
+-XX:+UseSHA512Intrinsics
+```
+
+启用了SHA-384和SHA-512加密哈希函数的内含物。控制内含物的标志现在需要选项`-XX:+UnlockDiagnosticVMOptions`。
+
+```
+-XX:+UseMathExactIntrinsics
+```
+
+启用各种`java.lang.Math.*Exact()`函数的内部化。默认情况下是启用的。控制本征的标志现在需要选项`-XX:+UnlockDiagnosticVMOptions`。
+
+```
+-XX:+UseMultiplyToLenIntrinsic
+```
+
+`启用``BigInteger.multiplyToLen()`的内部化。在支持该功能的平台上默认为启用。控制本征的标志现在需要选项`-XX:+UnlockDiagnosticVMOptions`。
+
+-XX:+UseSquareToLenIntrinsic
+
+`启用``BigInteger.squareToLen()`的内部化。在支持该功能的平台上默认为启用。控制本征的标志现在需要选项`-XX:+UnlockDiagnosticVMOptions`。
+
+-XX:+UseMulAddIntrinsic
+
+`启用``BigInteger.mulAdd()`的内部化。在支持该功能的平台上默认为启用。控制本征的标志现在需要选项`-XX:+UnlockDiagnosticVMOptions`。
+
+-XX:+UseMontgomeryMultiplyIntrinsic
+
+`启用``BigInteger.montgomeryMultiply()`的内部化。在支持该功能的平台上默认为启用。现在，控制内部化的标志需要选项`-XX:+UnlockDiagnosticVMOptions`。
+
+-XX:+UseMontgomerySquareIntrinsic
+
+`启用``BigInteger.montgomerySquare()`的内部化。在支持该功能的平台上默认为启用。控制本征的标志现在需要选项`-XX:+UnlockDiagnosticVMOptions`。
+
+```
+-XX:+UseCMoveUnconditionally
+```
+
+产生CMove（标量和矢量）指令，而不考虑盈利能力分析。
+
+```
+-XX:+UseCodeCacheFlushing
+```
+
+启用在关闭编译器前冲刷代码缓存的功能。这个选项默认是启用的。要想在关闭编译器前禁止刷新代码缓存，请指定`-XX:-UseCodeCacheFlushing`。
+
+```
+-XX:+UseCondCardMark
+```
+
+启用在更新卡片表之前检查卡片是否已经被标记。这个选项在默认情况下是禁用的。它只应在有多个套接字的机器上使用，它可以提高依赖并发操作的Java应用程序的性能。
+
+```
+-XX:+UseCountedLoopSafepoints
+```
+
+在计数的循环中保留安全点。其默认值取决于所选的垃圾收集器是否需要低延迟的安全点。
+
+`-XX:LoopStripMiningIter=`*number_of_iterations*
+
+控制内部带状开采循环的迭代次数。带状开采将计数的循环转化为两级嵌套的循环。安全点被保留在外循环中，而内循环可以全速执行。这个选项控制内循环的最大迭代次数。默认值是1,000。
+
+`-XX:LoopStripMiningIterShortLoop`=*number_of_iterations*
+
+控制循环带状开采的优化。迭代次数少于指定次数的循环将不会有安全点。默认值是`-XX:LoopStripMiningIter`的1/10。
+
+```
+-XX:+UseFMA
+```
+
+对于有FMA指令的硬件，启用基于硬件的FMA内涵（如Intel和ARM64）。FMA内含物是为计算`( `*a* `* `*b* `+ `*c* `)`表达式的值的`java.lang.Math.fma(`*a*`, `*b*`, `*c*`)`方法生成的。
+
+```
+-XX:+UseRTMDeopt
+```
+
+根据中止率自动调整 RTM 锁定。这个比率是由`-XX:RTMAbortRatio`选项指定的。如果中止的事务数量超过中止比率，那么包含锁的方法将被取消优化，并以所有锁作为正常锁重新编译。这个选项在默认情况下是禁用的。必须启用`-XX:+UseRTMLocking`选项。
+
+```
+-XX:+UseRTMLocking
+```
+
+为所有膨胀的锁生成受限事务性内存（RTM）的锁代码，正常的锁机制作为后备处理。这个选项在默认情况下是禁用的。与RTM相关的选项只在支持事务性同步扩展（TSX）的x86 CPU上可用。
+
+RTM是英特尔TSX的一部分，它是x86指令集的扩展，有利于创建多线程的应用程序。RTM引入了新指令`XBEGIN`、`XABORT`、`XEND`和`XTEST`。`XBEGIN`和`XEND`指令包含了一组指令，作为事务运行。如果在运行事务时没有发现冲突，那么内存和寄存器的修改会在`XEND`指令中一起提交。`XABORT`指令可以用来明确地中止一个事务，`XTEST`指令检查一组指令是否在一个事务中运行。
+
+当另一个线程试图访问同一个事务时，事务上的锁就会膨胀，从而阻塞了最初没有请求访问该事务的线程。RTM要求在事务中止或失败的情况下，指定一套后备操作。RTM锁是一个被委托给TSX的系统的锁。
+
+RTM改善了在关键区域（即不能被一个以上的线程同时访问的代码）中冲突较少的高竞争锁的性能。RTM还改善了粗粒度锁的性能，这种锁在多线程应用中通常表现不佳。(粗粒度锁是长期持有锁的策略，以最小化获取和释放锁的开销，而细粒度锁是试图通过仅在必要时上锁并尽快解锁来实现最大的并行性的策略。)另外，对于不同线程使用的轻度争夺锁，RTM可以减少错误的缓存线共享，也被称为缓存线乒乓。这发生在不同处理器的多个线程访问不同的资源，但这些资源共享同一个缓存线。结果是，处理器反复使其他处理器的缓存线失效，这迫使它们从主内存而不是其缓存中读取。
+
+```
+-XX:+UseSuperWord
+```
+
+使得标量操作转变为超字操作。超字是一种矢量优化。这个选项在默认情况下是启用的。要禁止将标量操作转换为超字操作，请指定`-XX:-UseSuperWord`。
+
+## Java的高级服务性选项
+
+这些`java`选项提供了收集系统信息和进行广泛调试的能力。
+
+```
+-XX:+DisableAttachMechanism
+```
+
+禁用让工具附加到JVM的机制。默认情况下，该选项是禁用的，这意味着附加机制被启用，你可以使用诊断和故障排除工具，如`jcmd`、`jstack`、`jmap`和`info`。
+
+**注意：**当使用一个 JDK 版本的工具来排除另一个 JDK 版本的故障时，不支持随 JDK 提供的工具，如 [jcmd](https://docs.oracle.com/en/java/javase/17/docs/specs/man/jcmd.html)、[info](https://docs.oracle.com/en/java/javase/17/docs/specs/man/jinfo.html)、[jmap](https://docs.oracle.com/en/java/javase/17/docs/specs/man/jmap.html) 和 [jstack。](https://docs.oracle.com/en/java/javase/17/docs/specs/man/jstack.html)
+
+```
+-XX:+ExtendedDTraceProbes
+```
+
+**Linux****和****macOS****：启用**影响性能的额外`trace`工具探测。默认情况下，该选项被禁用，`dtrace`只执行标准探测。
+
+```
+-XX:+HeapDumpOnOutOfMemoryError
+```
+
+当抛出`java.lang.OutOfMemoryError`异常时，通过使用堆分析器（HPROF），启用将Java堆转储到当前目录下的一个文件。你可以使用`-XX:HeapDumpPath`选项明确设置堆转储文件路径和名称。默认情况下，这个选项是禁用的，当`OutOfMemoryError`异常被抛出时，堆不会被转储。
+
+```
+-XX:HeapDumpPath=path
+```
+
+当设置了`-XX:+HeapDumpOnOutOfMemoryError`选项时，设置写堆分析器（HPROF）提供的堆转储的路径和文件名。默认情况下，该文件是在当前工作目录下创建的，它被命名为`java_pid<pid>.hprof`，其中`<pid>`是导致错误的进程的标识符。下面的例子显示了如何明确设置默认文件（`%p`代表当前进程的标识符）。
+
+```
+-XX:HeapDumpPath=./java_pid%p.hprof
+```
+
+·     **Linux****和****macOS****：**下面的例子显示了如何设置堆转储文件为`/var/log/java/java_heapdump.hprof`。
+
+```
+-XX:HeapDumpPath=/var/log/java/java_heapdump.hprof
+```
+
+·     **Windows****。**下面的例子显示了如何设置堆转储文件为`C:/log/java/java_heapdump.log`。
+
+```
+-XX:HeapDumpPath=C:/log/java/java_heapdump.log
+```
+
+`-XX:LogFile=`*path*
+
+设置写入日志数据的路径和文件名。默认情况下，该文件是在当前工作目录下创建的，并命名为`hotspot.log`。
+
+·     **Linux****和****macOS****：**下面的例子显示了如何将日志文件设置为`/var/log/java/hotspot.log`。
+
+```
+-XX:LogFile=/var/log/java/hotspot.log
+```
+
+·     **Windows****。**下面的例子显示了如何将日志文件设置为`C:/log/java/hotspot.log`。
+
+```
+-XX:LogFile=C:/log/java/hotspot.log
+-XX:+PrintClassHistogram
+```
+
+启用在以下事件之一后打印类实例直方图。
+
+·     **Linux****和****macOS****：**`Control+Break`
+
+·     **Windows****。**`Control+C`（`SIGTERM``）`。
+
+默认情况下，这个选项是禁用的。
+
+设置这个选项相当于运行`jmap -histo`命令，或者`jcmd `*pid* `GC.class_histogram`命令，其中*pid*是当前Java进程的标识符。
+
+```
+-XX:+PrintConcurrentLocks
+```
+
+在以下事件之一发生后，启用打印`java.util.concurrent``锁的功能。`
+
+·     **Linux****和****macOS****：**`Control+Break`
+
+·     **Windows****。**`Control+C`（`SIGTERM``）`。
+
+默认情况下，这个选项是禁用的。
+
+设置该选项相当于运行`jstack -l`命令或`jcmd `*pid* `Thread.print -l`命令，其中*pid*是当前Java进程的标识符。
+
+```
+-XX:+PrintFlagsRanges
+```
+
+打印指定的范围，并允许自动测试数值。参见[验证Java虚拟机标志参数](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#validate-java-virtual-machine-flag-arguments)。
+
+```
+-XX:+PerfDataSaveToFile
+```
+
+如果启用，在 Java 应用程序退出时保存 [jstat](https://docs.oracle.com/en/java/javase/17/docs/specs/man/jstat.html) 二进制数据。该二进制数据保存在一个名为 `hsperfdata_`*pid* *的*文件中，其中 *pid* 是您运行的 Java 应用程序的进程标识符。使用`jstat`命令来显示该文件中包含的性能数据，如下所示。
+
+`jstat -class file://`*path*`/hsperfdata_`*pid*
+
+`jstat -gc file://`*path*`/hsperfdata_`*pid*
+
+```
+-XX:+UsePerfData
+```
+
+启用`perfdata`功能。该选项默认为启用，以允许JVM监控和性能测试。禁用它可以抑制`hsperfdata_userid``目录的`创建。要禁用`perfdata`功能，请指定`-XX:-UsePerfData`。
+
+## Java的高级垃圾收集选项
+
+这些`java`选项控制Java HotSpot VM如何进行垃圾收集（GC）。
+
+```
+-XX:+AggressiveHeap
+```
+
+启用Java堆优化。这将根据计算机的配置（RAM和CPU），设置各种参数，使其对长期运行的作业有最佳的内存分配。默认情况下，该选项被禁用，堆的大小被配置得不那么积极。
+
+```
+-XX:+AlwaysPreTouch
+```
+
+要求虚拟机在向操作系统请求后，在将内存交给应用程序之前，触摸Java堆上的每个页面。默认情况下，这个选项是禁用的，当应用程序使用堆空间时，所有页面都被提交。
+
+`-XX:ConcGCThreads=`*threads*
+
+设置用于并发GC的线程数。将`*线程数*`设置为并行垃圾收集线程数的大约1/4。默认值取决于JVM可用的CPU的数量。
+
+例如，要将并发GC的线程数设置为2，指定以下选项。
+
+```
+-XX:ConcGCThreads=2
+-XX:+DisableExplicitGC
+```
+
+启用选项，禁止处理对`System.gc()`方法的调用。这个选项默认是禁用的，也就是说，对`System.gc()``的调用`会被处理。如果处理对`System.gc()``的`调用被禁用，那么JVM在必要时仍然会执行GC。
+
+```
+-XX:+ExplicitGCInvokesConcurrent
+```
+
+通过使用`System.gc()`请求来启用并发的GC。这个选项默认是禁用的，只能通过`-XX:+UseG1GC`选项启用。
+
+`-XX:G1AdaptiveIHOPNumInitialSamples=`*number*
+
+当`-XX:UseAdaptiveIHOP`被启用时，这个选项设置用于收集样本的完成标记周期的数量，直到G1自适应地确定`-XX:InitiatingHeapOccupancyPercent`的最佳值。之前，G1直接使用`-XX:InitiatingHeapOccupancyPercent`的值来达到这个目的。默认值是3。
+
+```
+-XX:G1HeapRegionSize=size
+```
+
+设置使用垃圾优先(G1)收集器时，Java堆被细分的区域的大小。这个值是2的幂，范围从1MB到32MB。默认的区域大小是根据堆的大小来确定的，目标是大约2048个区域。
+
+下面的例子将分区的大小设置为16MB。
+
+```
+-XX:G1HeapRegionSize=16m
+```
+
+`-XX:G1HeapWastePercent=`*percent*
+
+设置你愿意浪费的堆的百分比。当可回收百分比小于堆浪费百分比时，Java HotSpot VM不会启动混合垃圾收集周期。默认是5%。
+
+`-XX:G1MaxNewSizePercent=`*percent*
+
+设置堆大小的百分比，作为年轻一代大小的最大值。默认值是你的Java堆的60%。
+
+这是一个实验性的标志。这个设置取代了`-XX:DefaultMaxNewGenPercent`设置。
+
+`-XX:G1MixedGCCountTarget=`*number*
+
+设置一个标记周期后混合垃圾收集的目标数量，以收集最多具有`G1MixedGCLIveThresholdPercent`活数据的旧区域。默认是8次混合垃圾收集。混合收集的目标是在这个目标数量之内。
+
+`-XX:G1MixedGCLiveThresholdPercent=`*percent*
+
+设置一个旧区域的占用率阈值，以包括在一个混合垃圾收集周期中。默认的占用率是85%。
+
+这是一个实验性的标志。这个设置取代了`-XX:G1OldCSetRegionLiveThresholdPercent`设置。
+
+`-XX:G1NewSizePercent=`*percent*
+
+设置堆的百分比，作为年轻一代大小的最小值。默认值是你的Java堆的5%。
+
+这是一个实验性的标志。这个设置取代了`-XX:DefaultMinNewGenPercent`设置。
+
+`-XX:G1OldCSetRegionThresholdPercent=`*percent*
+
+设置在一个混合垃圾收集周期中要收集的旧区域的数量上限。默认是Java堆的10%。
+
+`-XX:G1ReservePercent=`*percent*
+
+设置堆的百分比（0到50），作为假上限保留，以减少G1收集器的推广失败的可能性。当你增加或减少这个百分比时，确保你以相同的数量调整总的Java堆。默认情况下，这个选项被设置为10%。
+
+下面的例子将保留堆设置为20%。
+
+```
+-XX:G1ReservePercent=20
+-XX:+G1UseAdaptiveIHOP
+```
+
+控制老一代占用率的自适应计算，以开始准备老一代收集的背景工作。如果启用，G1在头几次使用`-XX:InitiatingHeapOccupancyPercent``，`由`-XX:G1AdaptiveIHOPNumInitialSamples`的值指定，之后自动适应性地计算一个新的最佳启动占用值。否则，旧代收集过程总是从由`-XX:InitiatingHeapOccupancyPercent`决定的旧代占用率开始。
+
+默认为启用。
+
+`-XX:InitialHeapSize=`*size*
+
+设置内存分配池的初始大小（以字节为单位）。这个值必须是0，或者是1024的倍数并且大于1MB。加字母`k`或`K`表示千字节，加`m`或`M`表示兆字节，加`g`或`G`表示千兆字节。默认值是在运行时根据系统配置选择的。
+
+下面的例子显示了如何使用各种单位将分配的内存大小设置为6MB。
+
+```
+-XX:InitialHeapSize=6291456
+-XX:InitialHeapSize=6144k
+-XX:InitialHeapSize=6m
+```
+
+如果你把这个选项设置为0，那么初始大小被设置为分配给老一代和年轻一代的大小之和。年轻一代的堆的大小可以用`-XX:NewSize`选项来设置。注意，`-Xms`选项同时设置了堆的最小和初始堆大小。如果`-Xms`出现在命令行的`-XX:InitialHeapSize`之后，那么初始堆的大小就会被设置为`-Xms`指定的值。
+
+`-XX:InitialRAMPercentage=`*percent*
+
+设置JVM在应用人体工程学启发式方法之前用于Java堆的初始内存量，占`-XX:MaxRAM`选项中所确定的最大内存量的百分比。默认值是1.5625%。
+
+下面的例子显示了如何设置用于Java堆的初始内存量的百分比。
+
+```
+-XX:InitialRAMPercentage=5
+```
+
+`-XX:InitialSurvivorRatio=`*ratio*
+
+设置吞吐量垃圾收集器（由`-XX:+UseParallelGC`选项启用）所使用的初始存活空间比率。通过使用`-XX:+UseParallelGC`选项，自适应大小在默认情况下由吞吐量垃圾收集器启用，存活空间根据应用行为从初始值开始调整。如果自适应大小被禁用（使用`-XX:-UseAdaptiveSizePolicy`选项），那么应该使用`-XX:SurvivorRatio`选项来设置整个应用程序执行过程中的生存空间的大小。
+
+根据年轻一代的规模（Y）和初始生存空间比率（R），可以用以下公式来计算初始生存空间的规模（S）。
+
+```
+S=Y/(R+2)
+```
+
+方程中的2表示两个生存空间。被指定为初始生存空间比率的数值越大，初始生存空间大小就越小。
+
+默认情况下，初始生存者空间比率被设置为8。如果使用年轻一代空间大小的默认值（2MB），那么生存者空间的初始大小为0.2MB。
+
+下面的例子显示了如何将初始存活空间比率设置为4。
+
+```
+-XX:InitialSurvivorRatio=4
+```
+
+`-XX:InitiatingHeapOccupancyPercent=`*percent*
+
+设置老一代占用的百分比（0到100），在这个百分比上开始G1垃圾收集器的前几个并发标记周期。
+
+默认情况下，启动值被设置为45%。值为0意味着从一开始就不停地并发GC循环，直到G1自适应地设置这个值。
+
+参见`-XX:G1UseAdaptiveIHOP`和`-XX:G1AdaptiveIHOPNumInitialSamples`选项。
+
+下面的例子显示了如何将启动的堆占用率设置为75%。
+
+```
+-XX:InitiatingHeapOccupancyPercent=75
+```
+
+`-XX:MaxGCPauseMillis=`*time*
+
+为最大的GC暂停时间设置一个目标（以毫秒为单位）。这是一个软目标，JVM将尽最大努力来实现它。指定的值并不适应你的堆大小。默认情况下，对于G1，最大的暂停时间目标是200毫秒。其他世代的收集器默认不使用暂停时间目标。
+
+下面的例子显示了如何将最大目标暂停时间设置为500毫秒。
+
+```
+-XX:MaxGCPauseMillis=500
+```
+
+`-XX:MaxHeapSize=`*size*
+
+设置内存分配池的最大尺寸（以byes为单位）。这个值必须是1024的倍数，并且大于2MB。加字母`k`或`K`表示千字节，加`m`或`M`表示兆字节，加`g`或`G`表示千兆字节。默认值是在运行时根据系统配置选择的。对于服务器的部署，选项`-XX:InitialHeapSize`和`-XX:MaxHeapSize`通常被设置为同一个值。
+
+下面的例子显示了如何使用各种单位将分配的内存的最大允许大小设置为80MB。
+
+```
+-XX:MaxHeapSize=83886080
+-XX:MaxHeapSize=81920k
+-XX:MaxHeapSize=80m
+```
+
+`-XX:MaxHeapSize`选项等同于`-Xmx`。
+
+`-XX:MaxHeapFreeRatio=`*percent*
+
+设置GC事件后允许的最大自由堆空间的百分比（0到100）。如果自由堆空间膨胀超过这个值，那么堆就会缩小。默认情况下，这个值被设置为70%。
+
+通过使用命令行选项`-XX:MaxHeapFreeRatio`（默认值为70%）和`MinHeapFreeRatio`（默认值为40%）降低参数`MaxHeapFreeRatio`和`MinHeapFreeRatio``的`值来最小化Java堆的大小。把`MaxHeapFreeRatio`降低到10%，`MinHeapFreeRatio``降低`到5%，已经成功地减少了堆的大小而没有太大的性能退步；然而，结果可能会因你的应用而有很大的不同。试试这些参数的不同值，直到它们尽可能的低，但仍然保持可接受的性能。
+
+```
+-XX:MaxHeapFreeRatio=10 -XX:MinHeapFreeRatio=5
+```
+
+试图保持小堆的客户还应该添加选项`-XX:-ShrinkHeapInSteps`。关于使用该选项通过减少嵌入式应用的动态足迹来保持Java堆小的描述，请参见[性能调优实例。](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#performance-tuning-examples)
+
+`-XX:MaxMetaspaceSize=`*size*
+
+设置可以分配给类元数据的最大本地内存量。默认情况下，这个大小是不受限制的。一个应用程序的元数据量取决于该应用程序本身、其他正在运行的应用程序以及系统中的可用内存量。
+
+下面的例子显示了如何将最大的类元数据大小设置为256MB。
+
+```
+-XX:MaxMetaspaceSize=256m
+```
+
+`-XX:MaxNewSize=`*size*
+
+设置年轻一代（苗圃）的堆的最大尺寸（字节）。默认值是根据人体工程学设置的。
+
+`-XX:MaxRAM=`*size*
+
+设置JVM在应用人体工程学启发式方法之前可能用于Java堆的最大内存量。默认值是JVM进程的最大可用内存量或128GB，以较低者为准。
+
+JVM进程可用的最大内存量是机器的物理内存和环境（如容器）设置的任何限制的最小值。
+
+如果该选项和其他影响最大内存量的选项的综合结果大于压缩OOPS可寻址的内存范围，则指定该选项会禁止自动使用压缩OOPS。参见`-XX:UseCompressedOops``，`了解有关压缩OOPS的进一步信息。
+
+下面的例子显示了如何设置最大的可用内存量来确定Java堆的大小为2GB。
+
+```
+-XX:MaxRAM=2G
+```
+
+`-XX:MaxRAMPercentage=`*percent*
+
+设置JVM在应用人体工程学启发式方法之前可能用于Java堆的最大内存量，是`-XX:MaxRAM`选项中所确定的最大内存量的百分比。默认值是25%。
+
+如果该选项和其他影响最大内存量的选项的综合结果大于压缩OOPS可寻址的内存范围，则指定该选项会禁止自动使用压缩OOPS。参见`-XX:UseCompressedOops``，`了解有关压缩OOPS的进一步信息。
+
+下面的例子显示了如何设置Java堆使用的最大内存量的百分比。
+
+```
+-XX:MaxRAMPercentage=75
+```
+
+`-XX:MinRAMPercentage=`*percent*
+
+设置JVM在应用人体工程学启发式方法之前可能用于Java堆的最大内存量，作为小堆的`-XX:MaxRAM`选项中所确定的最大内存量的一个百分比。一个小堆是一个大约125MB的堆。默认值是50%。
+
+下面的例子显示了如何为小堆设置Java堆使用的最大内存量的百分比。
+
+```
+-XX:MinRAMPercentage=75
+```
+
+`-XX:MaxTenuringThreshold=`*threshold*
+
+设置用于自适应GC大小的最大租用阈值。最大的值是15。并行（吞吐量）收集器的默认值是15。
+
+下面的例子显示了如何将最大租期阈值设置为10。
+
+```
+-XX:MaxTenuringThreshold=10
+```
+
+`-XX:MetaspaceSize=`*size*
+
+设置分配的类元数据空间的大小，第一次超过这个大小就会触发垃圾收集。这个垃圾收集的阈值会根据元数据的使用量而增加或减少。默认的大小取决于平台。
+
+`-XX:MinHeapFreeRatio=`*percent*
+
+设置GC事件后允许的最小自由堆空间的百分比（0到100）。如果自由堆空间低于这个值，那么堆就会被扩大。默认情况下，这个值被设置为40%。
+
+通过使用命令行选项`-XX:MaxHeapFreeRatio`（默认值为70%）和`MinHeapFreeRatio`（默认值为40%）降低参数`MaxHeapFreeRatio`和`MinHeapFreeRatio``的`值来最小化Java堆大小。把`MaxHeapFreeRatio`降低到10%，`MinHeapFreeRatio``降低`到5%，已经成功地减少了堆的大小而没有太大的性能退步；然而，结果可能会因你的应用而有很大的不同。试试这些参数的不同值，直到它们尽可能的低，但仍然保持可接受的性能。
+
+```
+-XX:MaxHeapFreeRatio=10 -XX:MinHeapFreeRatio=5
+```
+
+试图保持小堆的客户还应该添加选项`-XX:-ShrinkHeapInSteps`。关于使用该选项通过减少嵌入式应用的动态足迹来保持Java堆小的描述，请参见[性能调优实例。](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#performance-tuning-examples)
+
+`-XX:MinHeapSize=`*size*
+
+设置内存分配池的最小尺寸（以字节为单位）。这个值必须是0，或者是1024的倍数并且大于1MB。加字母`k`或`K`表示千字节，加`m`或`M`表示兆字节，加`g`或`G`表示千兆字节。默认值是在运行时根据系统配置选择的。
+
+下面的例子显示了如何使用各种单位将分配的内存的最小尺寸设置为6MB。
+
+```
+-XX:MinHeapSize=6291456
+-XX:MinHeapSize=6144k
+-XX:MinHeapSize=6m
+```
+
+如果你把这个选项设置为0，那么最小尺寸被设置为与初始尺寸相同的值。
+
+`-XX:NewRatio=`*ratio*
+
+设置年轻一代和老一代的比例。默认情况下，该选项被设置为2。下面的例子显示了如何将年轻与年老的比例设置为1。
+
+```
+-XX:NewRatio=1
+```
+
+`-XX:NewSize=`*size*
+
+设置年轻一代（苗圃）的堆的初始大小（字节）。附加字母`k`或`K`表示千字节，`m`或`M`表示兆字节，或`g`或`G`表示千兆字节。
+
+堆的年轻一代区域被用于新的对象。在这个区域进行的GC比在其他区域更频繁。如果年轻一代的大小太低，那么就会执行大量的小GC。如果大小太高，那么只执行完全的GC，这可能需要很长的时间来完成。建议你将年轻一代的大小保持在整个堆大小的25%以上，50%以下。
+
+下面的例子显示了如何使用各种单位将年轻一代的初始大小设置为256MB。
+
+```
+-XX:NewSize=256m
+-XX:NewSize=262144k
+-XX:NewSize=268435456
+```
+
+`-XX:NewSize`选项等同于`-Xmn`。
+
+`-XX:ParallelGCThreads=`*threads*
+
+设置停止世界（STW）工作线程的数量。默认值取决于JVM可用的CPU数量和选择的垃圾收集器。
+
+例如，要将G1 GC的线程数设置为2，指定以下选项。
+
+```
+-XX:ParallelGCThreads=2
+-XX:+ParallelRefProcEnabled
+```
+
+启用平行参考处理。默认情况下，这个选项是禁用的。
+
+```
+-XX:+PrintAdaptiveSizePolicy
+```
+
+启用打印关于自适应生成尺寸的信息。默认情况下，这个选项是禁用的。
+
+```
+-XX:+ScavengeBeforeFullGC
+```
+
+在每次完整的GC之前启用年轻一代的GC。这个选项在默认情况下是启用的。建议你*不要*禁用它，因为在完全GC之前清扫年轻一代会减少从老一代空间进入年轻一代空间的对象数量。要在每次完全GC之前禁用年轻一代的GC，可以指定选项`-XX:-ScavengeBeforeFullGC`。
+
+`-XX:SoftRefLRUPolicyMSPerMB=`*time*
+
+设置软可达对象在上次被引用后在堆上保持活动的时间（以毫秒计）。默认值是堆中每个空闲兆字节的寿命为一秒。`-XX:SoftRefLRUPolicyMSPerMB`选项接受整数值，代表当前堆大小（对于Java HotSpot客户端虚拟机）或最大可能的堆大小（对于Java HotSpot服务器虚拟机）每1兆字节的毫秒。这种差异意味着客户端虚拟机倾向于刷新软引用而不是增长堆，而服务器虚拟机倾向于增长堆而不是刷新软引用。在后一种情况下，`-Xmx`选项的值对软引用的垃圾收集速度有很大影响。
+
+下面的例子显示了如何将数值设置为2.5秒。
+
+```
+-XX:SoftRefLRUPolicyMSPerMB=2500
+-XX:-ShrinkHeapInSteps
+```
+
+逐步减少Java堆到目标大小，由选项`-XX:MaxHeapFreeRatio`指定。这个选项在默认情况下是启用的。如果禁用，那么它会立即将Java堆减少到目标大小，而不是需要多个垃圾收集周期。如果你想最小化Java堆的大小，请禁用这个选项。当这个选项被禁用时，你可能会遇到性能下降的情况。
+
+关于使用`MaxHeapFreeRatio`选项通过减少嵌入式应用程序的动态足迹来保持Java堆的大小，请参见[性能调优实例。](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#performance-tuning-examples)
+
+`-XX:StringDeduplicationAgeThreshold=`*threshold*
+
+识别达到指定年龄的`字符串`对象，这些对象被认为是重复数据删除的候选对象。一个对象的年龄是衡量它在垃圾收集中存活的次数。这有时被称为使用期。
+
+**注意：**在达到这个年龄之前被提升到旧堆区域的`字符串`对象总是被认为是重复数据删除的候选对象。这个选项的默认值是`3`，参见`-XX:+UseStringDeduplication`选项。
+
+`-XX:SurvivorRatio=`*ratio*
+
+设置伊甸园空间大小和生存者空间大小之间的比例。默认情况下，这个选项被设置为8。下面的例子显示了如何将伊甸园/幸存者空间的比例设置为4。
+
+```
+-XX:SurvivorRatio=4
+```
+
+`-XX:TargetSurvivorRatio=`*percent*
+
+设置年轻时垃圾收集后使用的存活空间的期望百分比（0到100）。默认情况下，这个选项被设置为50%。
+
+下面的例子显示了如何将目标存活空间比率设置为30%。
+
+```
+-XX:TargetSurvivorRatio=30
+```
+
+`-XX:TLABSize=`*size*
+
+设置线程本地分配缓冲区（TLAB）的初始大小（以字节为单位）。附加字母`k`或`K`表示千字节，`m`或`M`表示兆字节，或`g`或`G``表示千兆字节`。如果这个选项被设置为0，那么JVM就会自动选择初始大小。
+
+下面的例子显示了如何设置初始TLAB大小为512KB。
+
+```
+-XX:TLABSize=512k
+-XX:+UseAdaptiveSizePolicy
+```
+
+启用自适应生成尺寸的使用。这个选项默认是启用的。要禁用自适应生成大小，指定`-XX:-UseAdaptiveSizePolicy`并明确设置内存分配池的大小。参见`-XX:SurvivorRatio`选项。
+
+```
+-XX:+UseG1GC
+```
+
+启用垃圾优先（G1）垃圾收集器的使用。这是一个服务器风格的垃圾收集器，针对有大量内存的多处理器机器。这个选项以高概率满足GC暂停时间的目标，同时保持良好的吞吐量。G1收集器被推荐给需要大堆（大小约为6GB或更大）且对GC延迟要求有限（稳定且可预测的暂停时间低于0.5秒）的应用。默认情况下，该选项被启用，G1被用作默认的垃圾收集器。
+
+```
+-XX:+UseGCOverheadLimit
+```
+
+启用一个策略，限制JVM在抛出`OutOfMemoryError`异常之前花在GC上的时间比例。默认情况下，这个选项是启用的，如果在垃圾收集上花费的时间超过总时间的98%，而恢复的堆少于2%，并行GC将抛出`OutOfMemoryError`。当堆很小的时候，这个功能可以用来防止应用程序长时间运行而没有什么进展。要禁用这个选项，请指定选项`-XX:-UseGCOverheadLimit`。
+
+```
+-XX:+UseNUMA
+```
+
+通过增加应用程序对低延迟内存的使用，在具有非统一内存架构（NUMA）的机器上启用应用程序的性能优化。默认情况下，这个选项是禁用的，不会对NUMA进行优化。该选项仅在使用并行垃圾收集器时可用（`-XX:+UseParallelGC`）。
+
+```
+-XX:+UseParallelGC
+```
+
+允许使用并行清扫垃圾收集器（也称为吞吐量收集器），通过利用多个处理器来提高你的应用程序的性能。
+
+默认情况下，该选项被禁用，使用默认的收集器。
+
+```
+-XX:+UseSerialGC
+```
+
+启用串行垃圾收集器的使用。这通常是小型和简单的应用程序的最佳选择，这些应用程序不需要垃圾收集器的任何特殊功能。默认情况下，该选项被禁用，使用默认的收集器。
+
+```
+-XX:+UseSHM
+```
+
+**仅限****Linux****。**使JVM能够使用共享内存来设置大型页面。
+
+关于设置大型页面，请参见[大型页面。](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#large-pages)
+
+```
+-XX:+UseStringDeduplication
+```
+
+启用重复数据删除的字符串。默认情况下，这个选项是禁用的。要使用这个选项，你必须启用垃圾优先（G1）的垃圾收集器。
+
+重复数据删除通过利用许多`字符串`对象是相同的这一事实，减少了`字符串`对象在Java堆中的内存占用。每个`String``对象`不是指向它自己的字符数组，而是相同的`String`对象可以指向并共享同一个字符数组。
+
+```
+-XX:+UseTLAB
+```
+
+启用年轻一代空间中线程本地分配块（TLAB）的使用。这个选项在默认情况下是启用的。要禁用TLABs的使用，请指定选项`-XX:-UseTLAB`。
+
+```
+-XX:+UseZGC
+```
+
+启用Z垃圾收集器（ZGC）的使用。这是一个低延迟的垃圾收集器，提供几毫秒的最大暂停时间，但要付出一定的吞吐量。暂停时间与使用的堆的大小无关。支持从8MB到16TB的堆大小。
+
+`-XX:ZAllocationSpikeTolerance`=*factor*
+
+设置ZGC的分配尖峰容忍度。默认情况下，这个选项被设置为2.0。这个系数描述了预期的分配尖峰的水平。例如，使用一个3.0的系数意味着当前的分配率可以预期在任何时候增加三倍。
+
+`-XX:ZCollectionInterval`=*seconds*
+
+设置使用ZGC时两个GC周期的最大间隔（秒）。默认情况下，这个选项被设置为0（禁用）。
+
+`-XX:ZFragmentationLimit`=*percent*
+
+设置ZGC的最大可接受的堆碎片（百分比）。默认情况下，这个选项被设置为25。使用一个较低的值会导致堆被更积极地压缩，以使用更多的CPU时间为代价回收更多的内存。
+
+```
+-XX:+ZProactive
+```
+
+使用ZGC时，启用主动的GC循环。默认情况下，这个选项是启用的。如果这样做对运行中的应用程序的影响最小，ZGC将启动一个主动的GC循环。如果应用程序大部分时间是空闲的，或者分配的对象很少，但你仍然想保持堆的大小，并允许引用处理发生，即使在堆上有大量的空闲空间，这是很有用的。
+
+```
+-XX:+ZUncommit
+```
+
+在使用ZGC时，启用未使用的堆内存的未提交。默认情况下，这个选项是启用的。取消提交未使用的堆内存将降低JVM的内存占用率，并使这些内存可供其他进程使用。
+
+`-XX:ZUncommitDelay`=*seconds*
+
+设置堆内存在未提交前必须未使用的时间（以秒为单位）。默认情况下，这个选项被设置为300（5分钟）。提交和取消提交内存是相对昂贵的操作。使用一个较低的值会导致堆内存提前被取消提交，但有可能很快就不得不再次提交。
+
+## 废弃的Java选项
+
+这些`java`选项已经过时了，可能在未来的JDK版本中被删除。它们仍然被接受并被执行，但是当它们被使用时，会发出一个警告。
+
+```
+-Xfuture
+```
+
+启用严格的类文件格式检查，强制执行对类文件格式规范的严格遵守。开发者在开发新代码时应该使用这个标志。在未来的版本中，更严格的检查可能成为默认值。
+
+`-Xloggc:`*文件名*
+
+设置用于记录verbose GC事件信息的文件，并将其重定向到该文件中。如果`-Xloggc``和``-verbose:gc`都是在同一个java命令中给出的，那么`-Xloggc`选项将覆盖`-verbose:gc``。``-Xloggc:`*文件名*被`-Xlog:gc:`*文件名所*取代。参见使用JVM统一日志框架启用日志。
+
+例子。
+
+```
+-Xlog:gc:garbag-collection.log
+-XX:+FlightRecorder
+```
+
+在应用程序的运行期间启用 Java Flight Recorder (JFR)。自JDK 8u40以来，使用JFR就不需要这个选项了。
+
+`-XX:InitialRAMFraction=`*ratio*
+
+设置JVM在应用人体工程学启发式方法之前可能用于Java堆的初始内存量，与`-XX:MaxRAM`选项中所确定的最大内存量的比率。默认值是64。
+
+使用选项`-XX:InitialRAMPercentage`代替。
+
+`-XX:MaxRAMFraction=`*ratio*
+
+设置JVM在应用人体工程学启发式方法之前可能用于Java堆的最大内存量，作为`-XX:MaxRAM`选项中所确定的最大内存量的一个分数。默认值是4。
+
+如果该选项和其他影响最大内存量的选项的综合结果大于压缩OOPS可寻址的内存范围，则指定该选项会禁止自动使用压缩OOPS。参见`-XX:UseCompressedOops``，`了解有关压缩OOPS的进一步信息。
+
+使用选项`-XX:MaxRAMP``百分比`代替。
+
+`-XX:MinRAMFraction=`*ratio*
+
+设置JVM在应用人体工程学启发式方法之前可能用于Java堆的最大内存量，作为小堆的`-XX:MaxRAM`选项中所确定的最大内存量的一个分数。一个小堆是一个大约125MB的堆。默认值是2。
+
+使用选项`-XX:MinRAMP``百分比`代替。
+
+```
+-XX:+UseBiasedLocking
+```
+
+启用偏置锁的使用。启用这个标志后，一些具有大量无争议同步的应用程序可能会获得明显的速度，但具有某些锁定模式的应用程序可能会看到速度下降。
+
+默认情况下，这个选项是禁用的。
+
+## 过时的Java选项
+
+这些`java`选项仍然被接受，但被忽略，当它们被使用时，会发出一个警告。
+
+`--``非法访问``=`*参数*
+
+如[JEP 261](https://openjdk.java.net/jeps/261#Relaxed-strong-encapsulation)中定义的那样，受控*的放松的强封装*。这个选项在JDK 16中被[JEP 396](https://openjdk.java.net/jeps/396)废弃，在JDK 17中被[JEP 403](https://openjdk.java.net/jeps/403)淘汰。
+
+## 删除Java选项
+
+这些`java`选项在JDK 17中已经被删除，使用它们会导致一个错误：。
+
+`未识别的虚拟机选项`` `*option-name*
+
+```
+-XX:+UseMembar
+```
+
+启用了在线程状态转换时发布membars的功能。这个选项在所有平台上都是默认禁用的，除了ARM服务器，在ARM服务器上是启用的。
+
+`-XX:MaxPermSize=`*size*
+
+设置最大的永久生成空间大小（单位：字节）。这个选项在JDK 8中被废弃，被`-XX:MaxMetaspaceSize`选项所取代。
+
+`-XX:PermSize=`*size*
+
+设置分配给永久生成的空间（以字节为单位），如果超过了这个空间，就会触发垃圾回收。这个选项在JDK 8中被废弃，被`-XX:MetaspaceSize`选项所取代。
+
+```
+-XX:+TraceClassLoading
+```
+
+启用类加载时的跟踪。默认情况下，这个选项是禁用的，类不会被追踪。
+
+替代的统一日志语法是`-Xlog:class+load=`*level*。请参阅[使用JVM统一日志框架启用日志。](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#enable-logging-with-the-jvm-unified-logging-framework)
+
+使用*level*=`info`获得常规信息，或者*level*=`debug`获得额外信息。在统一日志语法中，`-verbose:class`等同于`-Xlog:class+load=info,class+unload=info`。
+
+```
+-XX:+TraceClassLoadingPreorder
+```
+
+启用对所有加载的类按照它们被引用的顺序进行追踪。默认情况下，这个选项是禁用的，类不会被追踪。
+
+替代的统一日志语法是`-Xlog:class+preorder=debug`。参见[使用JVM统一日志框架启用日志](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#enable-logging-with-the-jvm-unified-logging-framework)。
+
+```
+-XX:+TraceClassResolution
+```
+
+启用对恒定池决议的追踪。默认情况下，这个选项是禁用的，恒定池决议不被追踪。
+
+替代的统一日志语法是`-Xlog:class+resolve=debug`。参见[使用JVM统一日志框架启用日志](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#enable-logging-with-the-jvm-unified-logging-framework)。
+
+```
+-XX:+TraceLoaderConstraints
+```
+
+启用对加载器约束记录的跟踪。默认情况下，这个选项是禁用的，加载器约束记录不被追踪。
+
+替代的统一日志语法是 `-Xlog:class+loader+constraints=info`。参见[使用JVM统一日志框架启用日志](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#enable-logging-with-the-jvm-unified-logging-framework)。
+
+关于以前的版本中删除的选项的列表和描述，请参见 "*删除的**Java**选项* *"*部分。
+
+·     [Java Platform, Standard Edition Tools Reference, Release 16](https://docs.oracle.com/en/java/javase/16/docs/specs/man/java.html)
+
+·     [Java Platform, Standard Edition Tools Reference, Release 15](https://docs.oracle.com/en/java/javase/15/docs/specs/man/java.html)
+
+·     [Java Platform, Standard Edition Tools Reference, Release 14](https://docs.oracle.com/en/java/javase/14/docs/specs/man/java.html)
+
+·     [Java Platform, Standard Edition Tools Reference, Release 13](https://docs.oracle.com/en/java/javase/13/docs/specs/man/java.html)
+
+·     [Java Platform, Standard Edition Tools Reference, Release 12](https://docs.oracle.com/en/java/javase/12/tools/java.html#GUID-3B1CE181-CD30-4178-9602-230B800D4FAE)
+
+·     [Java Platform, Standard Edition Tools Reference, Release 11](https://docs.oracle.com/en/java/javase/11/tools/java.html#GUID-741FC470-AA3E-494A-8D2B-1B1FE4A990D1)
+
+·     [Java Platform, Standard Edition Tools Reference, Release 10](https://docs.oracle.com/javase/10/tools/java.htm#JSWOR624)
+
+·     [Java Platform, Standard Edition Tools Reference, Release 9](https://docs.oracle.com/javase/9/tools/java.htm#JSWOR624)
+
+·     [Java平台，标准版工具参考，第8版，适用于Windows上的Oracle JDK](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html#BGBCIEFC)
+
+·     [适用于Solaris、Linux和macOS上的Oracle JDK的Java平台标准版工具参考，第8版](https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html#BGBCIEFC)
+
+## java命令行参数文件
+
+你可以通过使用`@`参数文件来指定一个或多个包含参数的文本文件来缩短或简化`java``命令，这些参数包括`选项和类的名称，它们被传递到`java`命令中。这让你可以在任何操作系统上创建任何长度的`java`命令。
+
+在命令行中，使用at符号（`@`）前缀来标识一个包含`java`选项和类名的参数文件。当`java`命令遇到以at符号（`@`）开头的文件时，它会将该文件的内容扩展成一个参数列表，就像它们在命令行中被指定一样。
+
+`java`启动器会展开参数文件的内容，直到它遇到`-disable-@files`选项。你可以在命令行的任何地方使用`--disable-@files`选项，包括在参数文件中，来停止`@`参数文件的扩展。
+
+以下项目描述了`java`参数文件的语法。
+
+·     参数文件必须只包含ASCII字符或ASCII友好的系统默认编码的字符，如UTF-8。
+
+·     参数文件大小不能超过MAXINT（2,147,483,647）字节。
+
+·     发射器不会扩展参数文件中的通配符。
+
+·     使用空白或换行字符来分隔文件中包含的参数。
+
+·     留白包括一个留白字符、 `\t`、 \`n`、 \`r`和 `\f`。
+
+例如，可以有一个带空格的路径，如`c:\Program Files`，可以指定为 `"c:\Program Files"`，或者，为了避免转义，`c:\Program" "Files`。
+
+·     任何包含空格的选项，如路径组件，必须在引号内，使用引号（'"'）字符完整地表达出来。
+
+·     引号内的字符串可能包含字符 \`n`, \`r`, `\t`, 和 `\f`。它们会被转换为各自的ASCII代码。
+
+·     如果一个文件名包含嵌入的空格，那么将整个文件名放在双引号中。
+
+·     参数文件中的文件名是相对于当前目录的，而不是相对于参数文件的位置。
+
+·     在参数文件中使用数字符号`#`来标识注释。在`#`后面的所有字符都会被忽略，直到行的末端。
+
+·     额外的at符号`@`前缀对`@``前缀的`选项起转义作用，（第一个`@`被删除，其余的参数按字面意思呈现给启动程序）。
+
+·     可以在行末使用延续字符(`\`)续行。这两行被连接起来，前面的白色空间被修剪。为了防止修剪前面的白色空间，可以在第一列放置一个延续字符（`\`）。
+
+·     因为反斜线（\）是一个转义字符，一个反斜线字符必须用另一个反斜线字符来转义。
+
+·     允许部分引用，并以文件结束的方式结束。
+
+·     开放式引号在行末停止，除非`\`是最后一个字符，然后通过删除所有领先的空白字符加入下一行。
+
+·     在这些列表中不允许使用通配符（*）（例如，指定`*.java`）。
+
+·     不支持使用at符号（`@`）来递归解释文件。
+
+### 论据文件中的开放或部分引语的例子
+
+在参数文件中。
+
+```
+-cp "lib/
+酷/
+应用/
+罐子
+```
+
+这被解释为。
+
+```
+-cp lib/cool/app/jars
+```
+
+### 在一个参数文件中用另一个反斜线字符转义的反斜线字符的例子
+
+要输出以下内容。
+
+```
+-cp c:\Program Files (x86)\Java\jre\lib\ext;c:\Program Files\Java\jre9\lib\ext
+```
+
+反斜线字符必须在参数文件中指定为。
+
+```
+-cp "c:\\Program Files (x86)\\Java\jre\lib\ext;c:\Program Files\Java\jre9\lib\ext"
+```
+
+### 用于强制串联参数文件中的行的EOL转义示例
+
+在参数文件中。
+
+```
+-cp "/lib/cool app/jars:/cp"。
+    /lib/another app/jars"
+```
+
+这被解释为。
+
+```
+-cp /lib/cool app/jars:/lib/another app/jars
+```
+
+### 参数文件中带前导空格的续行示例
+
+在参数文件中。
+
+```
+-cp "/lib/cool\
+\牐牎 牐 牐 牐 牐 牐 牐 牐
+```
+
+这被解释为。
+
+```
+-cp /lib/cool app/jars
+```
+
+### 使用单参数文件的例子
+
+你可以使用一个参数文件，比如下面例子中的`myargumentfile`，来保存所有需要的`java`参数。
+
+```
+java @myargumentfile
+```
+
+### 在路径中使用参数文件的例子
+
+你可以在参数文件中包含相对路径；但是，它们是相对于当前工作目录的，而不是相对于参数文件本身的路径。在下面的例子中，`path1/options`和`path2/options`代表不同路径的参数文件。它们包含的任何相对路径都是相对于当前工作目录的，而不是相对于参数文件的。
+
+```
+java @path1/options @path2/classes
+```
+
+## 代码堆状态分析
+
+### 概述
+
+在某些情况下，深入了解JVM代码堆的当前状态将有助于回答诸如以下问题。
+
+·     为什么JIT被关闭，然后又一次次被打开？
+
+·     所有的代码堆空间都去哪儿了？
+
+·     为什么方法清扫器不能有效工作？
+
+为了提供这种洞察力，已经实现了一个代码堆状态分析功能，能够对代码堆进行即时分析。分析过程分为两部分。第一部分检查整个代码堆，并汇总所有被认为是有用或重要的信息。第二部分由几个独立的步骤组成，打印收集到的信息，重点是数据的不同方面。数据收集和打印是在 "按要求 "的基础上进行的。
+
+### 语法
+
+可以用以下命令发出实时、即时分析的请求。
+
+`jcmd `*pid* `Compiler.CodeHeap_Analytics `[*function*] [*granularity*]（*功能）。*
+
+如果你只对运行样本工作负载后的代码堆的情况感兴趣，你可以使用命令行选项。
+
+```
+-Xlog:codecache=Trace
+```
+
+要查看 "CodeCache满 "条件存在时的代码堆状态，用命令行选项启动虚拟机。
+
+```
+-Xlog:codecache=Debug
+```
+
+请参阅[CodeHeap State Analytics (OpenJDK](https://bugs.openjdk.java.net/secure/attachment/75649/JVM_CodeHeap_StateAnalytics_V2.pdf))，以了解对代码堆状态分析功能、所支持的函数和粒度选项的详细描述。
+
+## 用JVM统一日志框架启用日志记录
+
+你使用`-Xlog`选项来配置或启用与Java虚拟机（JVM）统一的日志框架的日志。
+
+### 简介
+
+`-Xlog`[`:`[*what*][`:`[*output*][`:`[*decorators*][`:`*output-options*]`,`...]]]]]
+
+`-Xlog:`*指令*
+
+*什么*
+
+指定*tag1*[`+`*tag2...*][`*`][`=`*level*][`,...`]形式的标签和级别的组合。除非指定通配符(`*`)，否则只匹配准确地用指定的标签标记的日志信息。参见[-Xlog Tags and Levels](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#xlog-tags-and-levels)。
+
+*产量*
+
+设置输出的类型。省略*输出*类型，默认为`stdout`。参见[-Xlog输出](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#xlog-output)。
+
+*装饰者*
+
+将输出配置为使用一组自定义的装饰器。省略*装饰器，*默认为`uptime`、`level`和`tags`。参见[装饰](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#decorations)器。
+
+*输出**-**选项*
+
+设置`-Xlog`日志输出选项。
+
+*指令*
+
+一个全局选项或子命令：帮助、禁用、异步
+
+### 描述
+
+Java虚拟机（JVM）的统一日志框架为JVM的所有组件提供了一个通用的日志系统。JVM的GC日志已被改变，以使用新的日志框架。旧的GC标志到相应的新的Xlog配置的映射在[Convert GC Logging Flags to Xlog中](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#convert-gc-logging-flags-to-xlog)描述。此外，运行时日志也被改变为使用JVM统一的日志框架。传统的运行时日志标志到相应的新Xlog配置的映射，在[Convert Runtime Logging Flags to Xlog](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#convert-runtime-logging-flags-to-xlog)中描述。
+
+下面提供了关于`-Xlog`命令和选项语法的快速参考。
+
+```
+-Xlog
+```
+
+启用JVM的`信息`级别的日志。
+
+```
+-Xlog:help
+```
+
+打印`-Xlog`使用语法和可用的标签、级别和装饰器，以及带有解释的命令行示例。
+
+```
+-Xlog:disable
+```
+
+关闭所有的日志记录，清除日志框架的所有配置，包括警告和错误的默认配置。
+
+`-Xlog`[`:`*选项*]
+
+按照多个参数在命令行上出现的顺序应用这些参数。同一个输出的多个`-Xlog``参数在`其给定的顺序中相互覆盖。
+
+该*选项*被设定为。
+
+[*标签选择*][`:`[*输出*][`:`[*装饰器*][`:`*输出**-**选项*]]]
+
+省略*标签选择，则*默认为标签集为`全部`，级别为`信息`。
+
+*标签*[`+...`] `全部`
+
+`all`标签是一个元标签，由所有可用的标签集组成。标签集定义中的星号`*`表示通配符标签匹配。用通配符匹配会选择*至少*包含指定标签的所有标签集。如果没有通配符，则只选择与指定标签集完全匹配的标签。
+
+*输出**-**选项*是
+
+`filecount=`*文件数* `filesize=`*文件大小，可选择**K**、**M**或**G**作为后缀。*
+
+### 默认配置
+
+当命令行上指定了`-Xlog`选项而没有指定其他内容时，就会使用默认配置。默认配置会记录所有级别与警告或错误相匹配的消息，不管消息与什么标签相关联。默认配置等同于在命令行中输入以下内容。
+
+```
+-Xlog:all=warning:stdout:uptime,level,tags
+```
+
+### 在运行时控制日志
+
+日志也可以在运行时通过诊断命令（用[jcmd](https://docs.oracle.com/en/java/javase/17/docs/specs/man/jcmd.html)工具）来控制。所有可以在命令行上指定的东西也可以用`VM.log`命令动态地指定。由于诊断命令被自动暴露为MBeans，你可以在运行时使用JMX来改变日志配置。
+
+### -Xlog标签和等级
+
+每个日志消息都有一个级别和一个标签集与之相关。消息的级别对应于它的细节，而标签集对应于消息所包含的内容或它所涉及的JVM组件（比如，`GC`、`jit`或`os`）。将GC标志映射到Xlog配置在[Convert GC Logging Flags to Xlog](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#convert-gc-logging-flags-to-xlog)中描述。将传统的运行时日志标志映射到相应的Xlog配置，在[Convert Runtime Logging Fl](https://docs.oracle.com/en/java/javase/17/docs/specs/man/java.html#convert-runtime-logging-flags-to-xlog)ags to Xlog中描述。
+
+**可用的日志级别。**
+
+- `关闭`
+- `痕迹`
+- `调试`
+- `信息`
+- `警告`
+- `错误`
+
+**可用的日志标签。**
+
+有几十个日志标签，通过正确的组合，可以实现一系列的日志输出。可以使用`-Xlog:help`查看全部可用的日志标签。指定`所有`标签而不是标签组合，可以匹配所有标签组合。
+
+### -Xlog输出
+
+`-Xlog`选项支持以下类型的输出。
+
+- `stdout `--- 将输出发送到stdout
+- `stderr `--- 将输出发送到stderr。
+- `file=`*filename* ---- 将输出发送到文本文件。
+
+当使用`file=`*filename*时，在文件名中指定`%p`和/或`%t`分别扩展为JVM的PID和启动时间戳。你也可以配置文本文件，根据文件大小和要旋转的文件数量来处理文件旋转。例如，要每10MB轮换一次日志文件，并保持5个文件的轮换，指定选项`filesize=10M``，``filecount=5`。文件的目标大小并不保证是准确的，它只是一个近似值。除非另有配置，否则文件在默认情况下最多轮换5个目标大小为20MB的文件。指定`filecount=0`意味着日志文件不应该被旋转。有一种可能性是预先存在的日志文件被覆盖了。
+
+### -Xlog输出模式
+
+默认情况下，日志信息是同步输出的--每条日志信息都是在进行日志调用时写入指定的输出。但是你可以通过指定使用异步日志模式来代替。
+
+```
+-Xlog:async
+```
+
+以异步方式写入所有日志。
+
+在异步日志模式下，日志网站将所有的日志信息排队到一个中间缓冲区，一个独立的线程负责将它们冲到相应的输出。中间缓冲区是有界限的，在缓冲区耗尽时，排队的消息被丢弃。日志条目的写入操作被保证为非阻塞的。
+
+选项`-XX:AsyncLogBufferSize=N`指定了中间缓冲区的内存预算，单位为字节。默认值应该足够大，以满足大多数情况。如果需要的话，用户可以提供一个自定义的值来交换内存开销和日志的准确性。
+
+### 装饰品
+
+日志信息是用有关信息进行装饰的。你可以将每个输出配置为使用一套自定义的装饰器。输出的顺序总是与表中所列相同。你可以配置在运行时使用的装饰物。装饰物被预置到日志消息中。比如说。
+
+```
+[6.567s][info][gc,old] 旧藏品完成
+```
+
+省略的`装饰器`默认为`uptime`、`level`和`tags`。`none`装饰器很特别，用于关闭所有装饰。
+
+`time `(`t)`, `utctime `(`utc`), `uptime `(`u`), `timemillis `(`tm`), `uptimemillis `(`um`), `timenanos `(`tn)`, `uptimenanos `(`un`), `hostname `(`hn`), `pid `(`p`), `tid `(`ti`), `level `(`l`), `tags `(`tg`) 装饰器也可以指定为 `none `表示没有装饰。
+
+| **装饰品**           | **描述**                                          |
+| -------------------- | ------------------------------------------------- |
+| `时间`或`t`          | 当前时间和日期为ISO-8601格式。                    |
+| `utctime`或`utc`     | 协调的世界时或协调的世界时。                      |
+| `正常运行时间`或`u`  | 自JVM启动以来的时间，以秒和毫秒计。例如，6.567s。 |
+| `计时器`             | `与``System.currentTimeMillis()`生成的值相同。    |
+| `uptimemillis`或`um` | JVM启动后的毫秒数。                               |
+| `廷纳诺斯`           | 与`System.nanoTime()`生成的值相同。               |
+| `uptimenanos`或`un`  | JVM启动后的纳秒数。                               |
+| `主机名`或`hn`       | 主机名称。                                        |
+| `pid`或`p`           | 进程标识符。                                      |
+| `蒂德`或`蒂`         | 线程标识符。                                      |
+| `水平`或`l`          | 与日志信息相关的级别。                            |
+| `标签`或`tg`         | 与日志信息相关的标签集。                          |
+
+### 将GC日志标志转换为Xlog
+
+| **遗留的垃圾收集（****GC****）标志** | **Xlog****配置**                       | **评论**                                                     |
+| ------------------------------------ | -------------------------------------- | ------------------------------------------------------------ |
+| `G1PrintHeapRegions`                 | `-Xlog:gc+region=trace`                | 不适用                                                       |
+| `GCLogFileSize`                      | 没有可用的配置                         | 日志旋转由框架处理。                                         |
+| `GCLogFiles``的数量`                 | 不适用                                 | 日志旋转由框架处理。                                         |
+| `打印自适应尺寸政策`                 | `-Xlog:gc+ergo*=`*level*               | 对大部分信息使用`调试`级别，或对`PrintAdaptiveSizePolicy`记录的所有内容使用`跟踪`级别。 |
+| `打印机``GC`                         | `-Xlog:gc`                             | 不适用                                                       |
+| `PrintGCApplicationConcurrentTime`   | `-Xlog:safepoint`                      | 注意，`PrintGCApplicationConcurrentTime`和`PrintGCApplicationStoppedTime`被记录在同一个标签上，在新的日志记录中没有分开。 |
+| `打印``GCAApplicationStoppedTime`    | `-Xlog:safepoint`                      | 注意，`PrintGCApplicationConcurrentTime`和`PrintGCApplicationStoppedTime`被记录在同一个标签上，在新的日志记录中没有分开。 |
+| `打印``GCCause`                      | 不适用                                 | GC的原因现在总是被记录下来。                                 |
+| `打印``GCDateStamps`                 | 不适用                                 | 日期戳由框架记录。                                           |
+| `打印``GCDetails`                    | `-Xlog:gc*`                            | 不适用                                                       |
+| `打印``GCID`                         | 不适用                                 | GC ID现在总是被记录下来。                                    |
+| `PrintGCTask TimeStamps`             | `-Xlog:gc+task*=debug`                 | 不适用                                                       |
+| `打印``GCT``时间戳`                  | 不适用                                 | 时间戳由框架记录。                                           |
+| `打印``HeapAtGC`                     | `-Xlog:gc+heap=trace`                  | 不适用                                                       |
+| `打印参考资料``GC`                   | `-Xlog:gc+ref*=debug`                  | 请注意，在旧的日志中，只有当`PrintGCDetails`也被启用时，`PrintReferenceGC`才有效果。 |
+| `PrintStringDeduplicationStatistics` | `-Xlog:gc+stringdedup*=debug | `不适用 |                                                              |
+| `打印授权分布`                       | `-Xlog:gc+age*=`*level*                | 对最相关的信息使用`调试`级别，或对`PrintTenuringDistribution`的所有记录使用`跟踪`级别。 |
+| `使用``GCLogFileRotation`            | 不适用                                 | 为`PrintTenuringDistribution`记录了什么。                    |
+
+### 将运行时日志标志转换为Xlog
+
+这些传统的标志不再被认可，如果直接使用会导致错误。请使用其统一的日志等价物来代替。
+
+| **遗留的运行时间标志**                            | **Xlog****配置**                      | **评论**                                                     |
+| ------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------ |
+| `追踪异常`                                        | `-Xlog:exceptions=info`               | 不适用                                                       |
+| `跟踪类加载`                                      | `-Xlog:class+load=`*level*            | 使用*level*=`info`获得常规信息，或者*level*=`debug`获得额外信息。在统一日志语法中，`-verbose:class`等同于`-Xlog:class+load=info,class+unload=info`。 |
+| `跟踪类加载预排序`                                | `-Xlog:class+preorder=debug`          | 不适用                                                       |
+| `TraceClassUnloading`                             | `-Xlog:class+unload=`*level*          | 使用*level*=`info`获得常规信息，或者*level*=`trace`获得额外信息。在统一日志语法中，`-verbose:class`等同于`-Xlog:class+load=info,class+unload=info`。 |
+| `核实（``VerboseVerification`                     | `-Xlog:verification=info`             | 不适用                                                       |
+| `跟踪类路径`                                      | `-Xlog:class+path=info`               | 不适用                                                       |
+| `追踪类分辨率`                                    | `-Xlog:class+resolve=debug`           | 不适用                                                       |
+| `跟踪类初始化`                                    | `-Xlog:class+init=info`               | 不适用                                                       |
+| `TraceLoaderConstraints`                          | `-Xlog:class+loader+constraints=info` | 不适用                                                       |
+| `TraceClassLoaderData`                            | `-Xlog:class+loader+data=`*level*     | 使用*level*=`debug`获取常规信息，或者使用*level*=`trace`获取额外信息。 |
+| `跟踪安全点清理时间（``TraceSafepointCleanupTime` | `-Xlog:safepoint+cleanup=info`        | 不适用                                                       |
+| `追踪安全点（``TraceSafepoint`                    | `-Xlog:safepoint=debug`               | 不适用                                                       |
+| `追踪监测通货膨胀`                                | `-Xlog:monitorinflation=debug`        | 不适用                                                       |
+| `追踪偏向性锁定`                                  | `-Xlog:biasedlocking=`*level*         | 使用*level*=`info`获取常规信息，或者使用*level*=`trace`获取额外信息。 |
+| `跟踪重定义类`                                    | `-Xlog:redefine+class*=`*level*       | *level*=`info`、`debug`和`trace`提供的信息量越来越大。       |
+
+### -Xlog使用实例
+
+以下是`-Xlog`的例子。
+
+```
+-Xlog
+```
+
+通过使用`info`级别将所有消息记录到`stdout`，并对`uptime`、`level`和`tags``进行`装饰。这等同于使用。
+
+```
+-Xlog:all=info:stdout:uptime,level,tags
+-Xlog:gc
+```
+
+使用`info`级别将带有`gc`标签的消息记录到`stdout`。对于所有其他级别的消息，默认的配置是`警告`级别。
+
+```
+-Xlog:gc,safepoint
+```
+
+记录带有`gc`或`safepoint`标签的信息，两者都使用`info`级别，到`stdout`，有默认的装饰。同时使用`gc`和`safepoint``标签的信息`不会被记录下来。
+
+```
+-Xlog:gc+ref=debug
+```
+
+记录带有 `gc `和 `ref `标签的信息，使用`调试`级别到 `stdout`，有默认的装饰。只用这两个标签中的一个标记的信息不会被记录。
+
+```
+-Xlog:gc=debug:file=gc.txt:none
+```
+
+使用`调试`级别将用`gc`标签标记的消息记录到一个叫做`gc.txt``的`文件，没有任何装饰。对于所有其他处于`警告`级别的消息的默认配置仍然有效。
+
+```
+-Xlog:gc=trace:file=gctrace.txt:uptimemillis,pids:filecount=5,filesize=1024
+```
+
+使用`跟踪`级别将带有`gc`标签的信息记录到一个由5个大小为1MB的文件组成的旋转文件组中，基本名称为`gctrace.txt`，使用装饰`uptimemillis`和`pid`。
+
+`警告`级别的所有其他消息的默认配置仍然有效。
+
+```
+-Xlog:gc::uptime,tid
+```
+
+使用默认的'info'级别记录带有`gc`标签的消息，默认输出`stdout`，并使用装饰`uptime`和`tid`。所有其他的消息在`警告`级别的默认配置仍然有效。
+
+```
+-Xlog:gc*=info,safepoint*=off
+```
+
+使用`信息`级别记录至少有 `gc` 标记的信息，但关闭对有 `safepoint `标记的信息的记录。同时标记为`gc`和`safepoint``的信息`不会被记录。
+
+```
+-Xlog:disable -Xlog:safepoint=trace:safepointtrace.txt
+```
+
+关闭所有的日志记录，包括警告和错误，然后启用用tracelevel标记的`safepoint`信息到文件`safepointtrace.txt``中`。默认配置并不适用，因为命令行以`-Xlog:disable`开始。
+
+### 复杂的-Xlog使用实例
+
+下面介绍几个使用`-Xlog`选项的复杂例子。
+
+```
+-Xlog:gc+class*=debug
+```
+
+使用`debug`级别将至少有`gc`和`class`标签的消息记录到`stdout`。对于所有其他的`警告`级别的消息，默认配置仍然有效
+
+```
+-Xlog:gc+meta*=trace,class*=off:file=gcmetatrace.txt
+```
+
+使用`跟踪`级别将至少带有 `gc `和 `meta `标签的消息记录到文件 `metatrace.txt`，但关闭所有带有 `class `标签的消息。标记有 `gc`、`meta `和 `class ``的信息`不会被记录，因为 `class* `被设置为关闭。除了包含`class``的消息，`其他所有`警告`级别的消息的默认配置都是有效的。
+
+```
+-Xlog:gc+meta=trace
+```
+
+使用`跟踪`级别将完全用`gc`和`meta`标签标记的消息记录到`stdout`。对于所有其他的消息，在`警告`级别的默认配置仍然是有效的。
+
+```
+-Xlog:gc+class+heap*=debug,meta*=warning, threads*=off
+```
+
+将至少使用`跟踪`级别的`gc`、`class`和`heap`标签的消息记录到`stdout`，但只记录带有级别的`meta`标签的消息。除了包含`线程的消息，`其他所有的消息在级别`警告中的`默认配置是有效的。
+
+## 验证Java虚拟机标志参数
+
+你使用提供给所有Java虚拟机（JVM）命令行标志的值进行验证，如果输入值无效或超出范围，那么将显示适当的错误信息。
+
+无论它们是在人机工程学上、在命令行中、由输入工具或通过API（例如，包`java.lang.management`中包含的类）设置的，提供给所有Java虚拟机（JVM）命令行标志的值都是有效的。人工智能在《Java平台标准版热点虚拟机垃圾收集调优指南》中有所描述。
+
+当所有的标志在JVM初始化过程中设置了它们的值，或者一个标志的值在运行时被改变（例如使用`jcmd`工具），范围和约束就会被验证。如果一个值违反了范围或约束检查，JVM将被终止，并在错误流中打印出适当的错误信息。
+
+例如，如果一个标志违反了范围或约束检查，那么JVM就会以错误退出。
+
+```
+java -XX:AllocatePrefetchStyle=5 -version
+intx AllocatePrefetchStyle=5超出了允许的范围 [ 0 ... 3 ] 。
+不正确地指定了VM选项'AllocatePrefetchStyle=5'。
+错误。无法创建Java虚拟机。
+错误。发生了一个致命的异常。程序将退出。
+```
+
+标志`-XX:+PrintFlagsRanges`可以打印出所有标志的范围。这个标志允许通过范围所提供的值来自动测试标志。对于有指定范围的标志，其类型、名称和实际范围会在输出中打印出来。
+
+比如说。
+
+```
+intx ThreadStackSize [ 0 ... 9007199254740987 ] {pd product}
+```
+
+对于没有指定范围的标志，其值不会显示在打印输出中。比如说
+
+```
+size_t NewSize [...] {产品}。
+```
+
+这有助于确定需要实现的标志。自动测试框架可以跳过那些没有值和没有实现的标志。
+
+## 大页
+
+你使用大的页面，也被称为巨大的页面，是指明显大于标准内存页面大小（根据处理器和操作系统的不同而不同）的内存页面。大页可以优化处理器的转换旁观缓冲区。
+
+译码器（TLB）是一个页面译码缓存，用于保存最近使用的虚拟到物理地址的译码。TLB是一种稀缺的系统资源。错过TLB的代价很高，因为处理器必须从分层页表中读取，这可能需要多次内存访问。通过使用更大的内存页大小，一个TLB条目可以代表一个更大的内存范围。这导致TLB的压力较小，内存密集型的应用程序可能有更好的性能。
+
+然而，使用大页会对系统性能产生负面影响。例如，当大量的内存被一个应用程序钉住时，可能会造成常规内存的短缺，导致其他应用程序的过度分页，使整个系统变慢。另外，一个已经运行了很长时间的系统可能会产生过度的碎片，这可能使它无法保留足够的大页内存。当这种情况发生时，无论是操作系统还是JVM都会恢复到使用常规页。
+
+Linux和Windows支持大页面。
+
+### Linux的大页面支持
+
+Linux从2.6版本开始支持大页面。要检查你的环境是否支持大页面，请尝试以下方法。
+
+```
+# cat /proc/meminfo | grep Huge
+巨大的页数_总数: 0
+巨大的页数_自由: 0
+...
+拥抱页面大小：2048 kB
+```
+
+如果输出包含以 "Huge "为前缀的项目，那么你的系统支持大页面。这些值可能因环境而异。`Hugepagesize`字段显示了你的环境中默认的大页面尺寸，其他字段显示了这种尺寸的大页面的细节。较新的内核支持多种大页面尺寸。要列出支持的页面大小，请运行这个。
+
+```
+# ls /sys/kernel/mm/hugepages/
+hugepages-1048576kB hugepages-2048kB
+```
+
+上述环境支持2MB和1GB的大页面，但需要对它们进行配置，以便JVM能够使用它们。当使用大页面而不启用透明的巨大页面（选项`-XX:+UseTransparentHugePages`）时，必须预先分配好大页面的数量。例如，为了使8GB的内存由2MB的大页面支持，以`root`身份登录并运行。
+
+```
+# echo 4096 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
+```
+
+建议在请求后检查`nr_hugepages`的值，以确保内核能够分配所请求的大页面数量。
+
+当使用选项`-XX:+UseSHM`来启用大页面时，你还需要确保`SHMMAX`参数被配置为允许分配足够大的共享内存段。为了允许最大共享段为8GB，以`root`身份登录并运行。
+
+```
+# echo 8589934592 > /proc/sys/kernel/shmmax
+```
+
+在一些环境中不需要这样做，因为默认值已经足够大了，但重要的是要确保该值足够大，以适应打算由大页面支持的内存量。
+
+**注意：**`/proc`和`/sys`中包含的值在你重新启动系统后会被重置，所以可能要在初始化脚本中设置它们（例如`rc.local`或`sysctl.conf`）。
+
+如果你配置了操作系统的内核参数，使其能够使用大的页面，Java进程可能会为Java堆以及其他内部区域分配大的页面，例如。
+
+- 代码缓存
+- 标记位图
+
+因此，如果你将`nr_hugepages`参数配置为Java堆的大小，那么JVM仍然可能无法使用大页面来分配堆，因为其他区域，如代码缓存可能已经使用了一些配置的大页面。
+
+### 对Windows的大页面支持
+
+要在Windows上使用大页面支持，管理员必须首先为运行该应用程序的用户分配额外的权限。
+
+1. 选择**控制面板**，**管理工具**，然后选择**本地安全策略**。
+2. 选择**本地策略**，然后选择**用户权限分配**。
+3. 双击**锁定内存中的页面**，然后添加用户和/或组。
+4. 重新启动你的系统。
+
+请注意，即使是运行该应用程序的管理员也需要这些步骤，因为管理员默认没有锁定内存中的页面的权限。
+
+## 应用类数据共享
+
+应用类数据共享（AppCDS）扩展了类数据共享（CDS），使应用类能够被放置在一个共享档案中。
+
+除了核心库的类之外，AppCDS还支持以下位置的[类数据共享](https://docs.oracle.com/en/java/javase/12/vm/class-data-sharing.html#GUID-7EAA3411-8CF0-4D19-BD05-DF5E1780AA91)。
+
+- 来自运行时图像的平台类
+- 来自运行时图像的应用类
+- 从班级路径中的应用班级
+- 模块路径中的应用类
+
+归档应用程序类在运行时提供更好的启动时间。当运行多个JVM进程时，AppCDS还通过为只读元数据共享内存来减少运行时的占用。
+
+CDS/AppCDS只支持从JAR文件归档类。
+
+在 JDK 11 之前，在以下情况下，非空目录被报告为致命错误。
+
+·     对于基础CDS，在`-Xbootclasspath/a`路径中不能存在一个非空的目录。
+
+·     使用`-XX:+UseAppCDS`，在`-Xbootclasspath/a`路径、类路径和模块路径中不能存在一个非空的目录。
+
+在 JDK 11 和更高版本中，`-XX:+UseAppCDS `已经过时，对于非空目录的行为是基于 classlist 中的类类型。在以下情况下，非空目录会被报告为一个致命的错误。
+
+·     如果应用程序类或平台类没有被加载，转储时间只在`-Xbootclasspath/a`路径中存在非空的目录时报告错误。
+
+·     如果应用类或平台类被加载，对于存在于`-Xbootclasspath/a`路径、类路径或模块路径中的非空目录，dump time会报告一个错误
+
+在 JDK 11 及更高版本中，使用 `-XX:DumpLoadedClassList=`*class_list_file* 会生成一个包含所有类（包括系统库类和应用程序类）的 classlist。你不必再指定 `-XX:+UseAppCDS `和 `-XX:DumpLoadedClassList `来生成一个完整的类列表。
+
+在 JDK 11 和更高版本中，由于 `UseAppCDS `已经过时，`SharedArchiveFile `默认成为一个产品标志。在任何配置中都不再需要为 `SharedArchiveFile `指定 `+UnlockDiagnosticVMOptions``。`
+
+类数据共享（CDS）/AppCDS不支持在类列表中归档阵列类。当遇到类列表中的数组时，CDS转储时间给出明确的错误信息。
+
+`预加载警告。无法找到`*Array_name*
+
+尽管类列表中的数组是不允许的，但一些数组类仍然可以在CDS/AppCDS转储时被创建。那些数组是在执行Java类加载器（`PlatformClassLoader`和系统类加载器）在转储时用来加载类的Java代码时创建的。创建的数组与其他加载的类一起被归档。
+
+### 扩展类数据共享以支持模块路径
+
+在 JDK 11 中，类数据共享（CDS）得到了改进，支持从模块路径归档类。
+
+·     要使用`-module-path `VM选项创建CDS存档，请使用以下命令行语法。
+
+`java -Xshare:dump -XX:SharedClassListFile=`*class_list_file* `-XX:SharedArchiveFile=`*shared_archive_file* `-module-path=`*path_to_modular_jar* `-m `*module_name*
+
+·     要使用`-module-path `VM选项运行CDS档案，请使用以下命令行语法。
+
+`java -XX:SharedArchiveFile=`*shared_archive_file* `--module-`*path*`=`*path_to_modular_jar* `-m `*module_name*
+
+下表描述了与模块路径有关的VM选项如何与`-Xshare`选项一起使用。
+
+| **选项**                | **-Xshare:dump**           | **-Xshare:{on,auto}****。** |
+| ----------------------- | -------------------------- | --------------------------- |
+| `--``模块路径`1 *mp*    | 允许的                     | 允许的2                     |
+| `--``模块`              | 允许的                     | 允许的                      |
+| `--``添加模块`          | 允许的                     | 允许的                      |
+| `-upgrade-module-path`3 | 不允许（如果指定则退出）。 | 允许（禁用CDS）。           |
+| `--``补丁模块`4         | 不允许（如果指定则退出）。 | 允许（禁用CDS）。           |
+| `--``限制性模块`5       | 不允许（如果指定则退出）。 | 允许（禁用CDS）。           |
+
+1尽管在`--module-path`中指定模块有两种方式，即模块化JAR或爆炸性模块，但只支持模块化JAR。
+
+2在转储时间和运行时间可以指定不同的*mp*。如果一个归档的类K在转储时从`mp1.jar`加载，但*mp*的变化导致它在运行时从不同的`mp2.jar`中可用，那么K的归档版本在运行时将被忽略；K将被动态加载。
+
+3目前，只有两个系统模块可以升级（`java.compiler`和`jdk.internal.vm.compiler`）。然而，这些模块在生产软件中很少被升级。
+
+4正如JEP 261中所记载的，在生产中强烈不建议使用`--``补丁``--``模块。`
+
+5`--limit-modules`是用于测试目的的。它很少在生产软件中使用。
+
+如果在转储时指定了`-upgrade-module-path`、`-patch-module`或`-limit-modules`，将打印出一个错误，JVM将退出。例如，如果在转储时指定了`-limit-modules`选项，用户将看到以下错误。
+
+```
+在初始化虚拟机的过程中发生错误
+在转储共享档案时，不能使用以下选项。--limit-modules
+```
+
+如果在运行时指定了`-upgrade-module-path`、`-patch-module`或`-limit-modules`，将打印出一条警告信息，表明CDS被禁用。例如，如果在运行时指定了`-limit-modules`选项，用户将看到以下警告。
+
+```
+Java HotSpot(TM) 64-Bit Server VM警告。当指定-limit-modules选项时，CDS被禁用。
+```
+
+其他几个值得注意的事情包括。
+
+·     支持`-cp`和`-module-path`的任何有效组合。
+
+·     模块路径中的非空目录会导致一个致命的错误。用户会看到以下错误信息。
+
+```
+错误：非空目录<目录> 提示：启用-Xlog:class+path=info来诊断故障 在VM的初始化过程中发生了错误 在路径中不能有非空目录
+```
+
+·     与类的路径不同，没有限制说转储时的模块路径必须与运行时的模块路径相等或为其前缀。
+
+·     如果模块路径中现有的JAR在归档生成后被更新，则归档将被废止。
+
+·     从模块路径中删除一个JAR并不会使共享存档失效。被移除的JAR中的归档类在运行时不会被使用。
+
+### 动态CDS档案
+
+动态CDS归档扩展了AppCDS，允许在一个Java应用程序退出时对类进行归档。它消除了为每个应用程序创建类列表的试运行步骤，从而提高了AppCDS的可用性。归档的类包括所有加载的应用程序类和库类，这些类不存在于JDK中的默认CDS归档中。
+
+创建动态存档时，需要一个基础存档。如果没有指定基础存档，则使用默认的CDS存档作为基础存档。
+
+要创建一个以默认CDS存档为基础存档的动态CDS存档，只需在运行Java应用程序的命令行中添加`-XX:ArchiveClassesAtExit=<``动态存档``>`选项即可。
+
+如果默认的CDS存档不存在，虚拟机将退出，出现以下错误。
+
+```
+当基本CDS档案未加载时，不支持ArchiveClassesAtExit
+```
+
+要使用动态CDS存档运行Java应用程序，只需在运行Java应用程序的命令行中添加`-XX:SharedArchiveFile=<dynamic archive>`选项。
+
+基本档案不需要在命令行中指定。基本存档信息，包括它的名称和完整路径，将从动态存档头中检索。注意，用户也可以使用`-XX:SharedArchiveFile`选项来指定常规的AppCDS存档。因此，在`-XX:SharedArchiveFile`选项中指定的归档文件可以是常规的或动态的归档文件。在虚拟机启动时，指定的归档文件头将被读取。如果 `-XX:SharedArchiveFile `指的是常规存档，那么行为将不会改变。如果 `-XX:SharedArchiveFile ``指的是`动态存档，则 VM 将从动态存档中检索基本存档位置。如果动态归档文件是用默认的CDS归档文件创建的，那么将使用当前默认的CDS归档文件，并相对于当前的运行时间环境找到。
+
+关于动态CDS存档转储时间和运行时间的错误检查，请参考[JDK-8221706。](https://bugs.openjdk.java.net/browse/JDK-8221706)
+
+### 创建共享存档文件并使用它来运行一个应用程序
+
+#### AppCDS档案
+
+下面的步骤创建了一个共享归档文件，其中包含了`test.Hello`应用程序使用的所有类。最后一步是用共享存档文件运行应用程序。
+
+\1.  创建一个`test.Hello`应用程序使用的所有类的列表。下面的命令创建了一个名为`hello.classlist``的`文件，其中包含这个应用程序使用的所有类的列表。
+
+```
+java -Xshare:off -XX:DumpLoadedClassList=hello.classlist -cp hello.jar test.Hello
+```
+
+注意，由`-cp`参数指定的classpath必须只包含JAR文件。
+
+\2.  创建一个共享档案，命名为`hello.jsa`，其中包含`hello.classlist`中的所有类。
+
+```
+java -Xshare:dump -XX``：``SharedArchiveFile=hello.jsa -XX``：``SharedClassListFile=hello.classlist -cp hello.jar
+```
+
+请注意，在归档创建时使用的classpath必须与运行时使用的classpath相同（或为其前缀）。
+
+\3.  用共享档案`hello.jsa`运行应用程序`test.Hello`。
+
+```
+java -XX:SharedArchiveFile=hello.jsa -cp hello.jar test.Hello
+```
+
+\4.  **可选** 验证`test.Hello`应用程序是否使用`hello.jsa`共享存档中包含的类。
+
+```
+java -XX:SharedArchiveFile=hello.jsa -cp hello.jar -verbose:class test.Hello
+```
+
+该命令的输出应包含以下文字。
+
+```
+通过sun/misc/Launcher$AppClassLoader从共享对象文件加载test.Hello。
+```
+
+#### 动态CDS档案
+
+下面的步骤创建了一个动态CDS归档文件，该文件包含`test.Hello`应用程序使用的类，并且不包括在默认的CDS归档文件中。第二步是用动态CDS归档文件运行应用程序。
+
+\1.  创建一个动态的CDS归档文件，命名为`hello.jsa`，它包含了由应用程序`test.Hello`加载的`hello.jar`中的所有类。
+
+```
+java -XX:ArchiveClassesAtExit=hello.jsa -cp hello.jar Hello
+```
+
+请注意，在归档创建时使用的classpath必须与运行时使用的classpath相同（或为其前缀）。
+
+\2.  用共享档案`hello.jsa`运行应用程序`test.Hello`。
+
+```
+java -XX:SharedArchiveFile=hello.jsa -cp hello.jar test.Hello
+```
+
+\3.  **可选** 重复上一节的第4步，验证`test.Hello`应用程序正在使用`hello.jsa`共享存档中的类。
+
+为了实现上述步骤1和2的自动化，人们可以写一个脚本，如以下内容。
+
+```
+    ARCHIVE=hello.jsa
+    if test -f $ARCHIVE; then
+        FLAG="-XX:SharedArchiveFile=$ARCHIVE"
+    否则
+        FLAG="-XX:ArchiveClassesAtExit=$ARCHIVE"
+    斐济
+    $JAVA_HOME/bin/java -cp hello.jar $FLAG test.Hello
+```
+
+与AppCDS归档一样，如果Java版本发生变化，归档需要重新生成。上面的脚本可以调整，以考虑到Java版本，如下。
+
+```
+    ARCHIVE=hello.jsa
+    VERSION=foo.version
+    if test -f $ARCHIVE -a -f $VERSION && cmp -s $VERSION $JAVA_HOME/release; then
+        FLAG="-XX:SharedArchiveFile=$ARCHIVE"
+    否则
+        FLAG="-XX:ArchiveClassesAtExit=$ARCHIVE"
+        cp -f $JAVA_HOME/release $VERSION
+    斐济
+    $JAVA_HOME/bin/java -cp hello.jar $FLAG test.Hello
+```
+
+目前，我们不支持向同一个CDS归档文件的并发转储操作。应注意避免向同一CDS归档的多个写入者。
+
+用户也可以用一个特定的基础档案创建一个动态的CDS档案，例如命名为`base.jsa`，如下所示。
+
+```
+java -XX:SharedArchiveFile=base.jsa -XX:ArchiveClassesAtExit=hello.jsa -cp hello.jar Hello
+```
+
+要使用动态CDS档案`hello.jsa`和特定的基础CDS档案`base.jsa`运行应用程序。
+
+```
+java -XX:SharedArchiveFile=base.jsa:hello.jsa -cp hello.jar Hello
+```
+
+注意，在Windows上，上述路径分隔符`:`应替换为`;`。
+
+如果用于创建动态存档的基本存档已被移动，上述指定基本存档的命令就很有用。通常情况下，只指定动态存档就足够了，因为可以从动态存档标题中检索到基本存档信息。
+
+### 在多个应用进程中共享一个共享的档案
+
+你可以在多个应用程序进程中共享同一个存档文件。这可以减少内存的使用，因为存档被内存映射到进程的地址空间中。操作系统会自动在这些进程中共享只读页。
+
+下面的步骤演示了如何创建一个可以被不同应用程序共享的公共归档文件。`common.jar`、`hello.jar`和`hi.jar`中的类被归档到`common.jsa`中，因为它们在归档过程中都在classpath中（步骤3）。
+
+要包括`hello.jar`和`hi.jar`中的类，必须将`.jar`文件添加到由`-cp`参数指定的classpath中。
+
+\1.  创建一个`Hello`应用程序使用的所有类的列表，并为`Hi`应用程序创建另一个列表。
+
+```
+java -XX:DumpLoadedClassList=hello.classlist -cp common.jar:hello.jar Hello
+java -XX:DumpLoadedClassList=hi.classlist -cp common.jar:hi.jar Hi
+```
+
+\2.  创建一个由所有将共享归档文件的应用程序使用的类的单一列表。
+
+**Linux****和****macOS** 以下命令将文件`hello.classlist`和`hi.classlist`合并为一个文件，`common.classlist`。
+
+```
+cat hello.classlist hi.classlist > common.classlist
+```
+
+**Windows** 以下命令将文件`hello.classlist`和`hi.classlist`合并为一个文件，`common.classlist`。
+
+```
+type hello.classlist hi.classlist > common.classlist
+```
+
+\3.  创建一个名为`common.jsa``的`共享档案，其中包含`common.classlist`中的所有类。
+
+```
+java -Xshare:dump -XX:SharedArchiveFile=common.jsa -XX:SharedClassListFile=common.classlist -cp common.jar:Hello.jar:Hi.jar
+```
+
+使用的classpath参数是`Hello`和`Hi`应用程序共享的公共类路径前缀。
+
+\4.  用同一个共享存档运行`Hello`和`Hi`应用程序。
+
+```
+java -XX:SharedArchiveFile=common.jsa -cp common.jar:hello.jar:hi.jar Hello
+java -XX:SharedArchiveFile=common.jsa -cp common.jar:hello.jar:hi.jar Hi
+```
+
+### 指定添加到存档文件中的额外共享数据
+
+`SharedArchiveConfigFile`选项用于指定添加到归档文件的额外共享数据。
+
+`-XX:SharedArchiveConfigFile=`*shared_config_file*
+
+JDK 9 及更高版本支持在同一主机上运行多个 JVM 进程时将符号和字符串对象添加到归档文件中以共享内存。这方面的一个例子是有多个JVM进程使用同一组Java EE类。当这些共同的类被加载和使用时，新的符号和字符串可能被创建并添加到JVM的内部 "符号 "和 "字符串 "表中。在运行时，从归档文件中映射出来的符号或字符串对象可以在多个JVM进程中共享，从而减少整体内存的使用。此外，归档字符串还在启动时间和运行时间执行方面提供了额外的性能优势。
+
+在 JDK 10 及更高版本中，归档类中的 CONSTANT_String 项在转储时被解析为内部的 String 对象，并且所有内部的 String 对象都被归档。然而，尽管所有归档类中的所有 CONSTANT_String 字样都被解析了，但添加额外的字符串可能仍然是有益的，这些字符串在类文件中不是字符串字样，但在运行时可能被你的应用程序使用。
+
+符号数据应该由附着在运行中的JVM进程上的`jcmd`工具生成。参见[jcmd](https://docs.oracle.com/en/java/javase/17/docs/specs/man/jcmd.html)。
+
+下面是`jcmd`中符号转储命令的一个例子。
+
+```
+jcmd `*pid* `VM.symboltable -verbose
+```
+
+**注意：**这个`jcmd`输出的第一行（进程ID）和第二行（`@VERSION ... `）应该从配置文件中排除。
+
+### 配置文件的例子
+
+下面是一个配置文件的例子。
+
+```
+版本：1.0
+@SECTION: 符号
+10 -1: linkMethod
+```
+
+在配置文件的例子中，`@SECTION: ``符号`条目使用以下格式。
+
+*长度* *refcount*`: `*符号*
+
+一个共享符号的*refcount*总是`-1`。
+
+`@SECTION`指定了它后面的部分的类型。该部分的所有数据必须与`@SECTION`所指定的类型相同。不同类型的数据不能混合使用。在一个`shared_config_file`中，允许有多个由不同的`@SECTION`指定的同一类型的分离数据部分。
+
+## 性能调优实例
+
+你可以使用Java高级运行时选项来优化你的应用程序的性能。
+
+### 为更高的吞吐量进行调整
+
+使用以下命令和高级选项，为你的应用实现更高的吞吐性能。
+
+```
+java -server -XX:+UseParallelGC -XX:+UseLargePages -Xmn10g -Xms26g -Xmx26g
+```
+
+### 为降低响应时间而进行调整
+
+使用以下命令和高级选项来实现你的应用程序的较低响应时间。
+
+```
+java -XX:+UseG1GC -XX:MaxGCPauseMillis=100
+```
+
+### 保持Java堆小，减少嵌入式应用的动态足迹
+
+使用以下高级运行时选项，以保持Java堆小，减少嵌入式应用程序的动态足迹。
+
+```
+-XX:MaxHeapFreeRatio=10 -XX:MinHeapFreeRatio=5
+```
+
+**注意：**这两个选项的默认值分别为70%和40%。因为在使用这些小的设置时，可能会出现性能牺牲，你应该在不引入不可接受的性能下降的情况下，尽可能地减少这些设置，以优化小的足迹。
+
+## 退出状态
+
+当调用启动器时出现错误参数、严重错误或JVM抛出的异常时，启动器通常会返回以下退出值。然而，Java应用程序可以通过使用API调用`System.exit(exitValue)``来`选择返回任何值。这些值是
+
+·     `0`: 成功完成
+
+·     `>0`: 发生了一个错误
+
+ 
